@@ -45,8 +45,28 @@ scripts\setup.bat
 
 ## ⚡ Quick Fix for Git Issues
 
-If you're getting git commit errors, run this first:
+If you're getting git commit errors, you have several options:
 
+### Option 1: Disable Pre-commit (Fastest)
+```cmd
+# Disable pre-commit hooks temporarily
+scripts\disable-precommit.bat
+
+# Then commit normally
+git add .
+git commit -m "your message"
+```
+
+### Option 2: Skip Hooks for One Commit
+```cmd
+# Commit without running hooks
+scripts\commit-no-hooks.bat "your message"
+
+# Or manually
+git commit --no-verify -m "your message"
+```
+
+### Option 3: Fix All Issues
 ```cmd
 # Fix all git and pre-commit issues
 scripts\fix-git-windows.bat
