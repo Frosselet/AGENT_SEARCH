@@ -51,25 +51,43 @@ if exist "scripts\setup-baml.sh" (
     REM Basic BAML setup fallback
     echo ℹ️  BAML CLI is included with baml-py package...
 
-    REM Create baml_src if it doesn't exist
+    REM Check if baml_src exists, if not create and copy files
     if not exist "baml_src" (
-        echo 🚀 Initializing BAML project...
-        uv run python -m baml_py init
-    )
+        echo 📁 Creating baml_src directory...
+        mkdir baml_src
 
-    REM Move main.baml if needed
-    if exist "baml\main.baml" (
-        if not exist "baml_src\main.baml" (
-            echo 📦 Moving main.baml to correct location...
-            if not exist "baml_src" mkdir baml_src
+        REM Check if we have existing BAML files to copy
+        if exist "baml\main.baml" (
+            echo 📦 Copying main.baml to baml_src...
             copy "baml\main.baml" "baml_src\main.baml"
         )
+
+        if exist "baml\generators.baml" (
+            echo 📦 Copying generators.baml to baml_src...
+            copy "baml\generators.baml" "baml_src\generators.baml"
+        )
+
+        if exist "baml\clients.baml" (
+            echo 📦 Copying clients.baml to baml_src...
+            copy "baml\clients.baml" "baml_src\clients.baml"
+        )
+
+        REM Initialize BAML project if no files were copied
+        if not exist "baml_src\main.baml" (
+            echo 🚀 Initializing new BAML project...
+            uv run baml-cli init
+        )
+    ) else (
+        echo ✅ baml_src directory already exists
     )
 
     REM Generate client
     echo ⚙️  Generating BAML client...
     if not exist "src\baml_client" mkdir src\baml_client
-    uv run python -m baml_py generate --from baml_src
+
+    REM Use baml-cli directly (it should be available after installing baml-py)
+    echo 🔄 Running baml-cli generate...
+    uv run baml-cli generate --from baml_src
 )
 
 echo ✅ BAML setup completed

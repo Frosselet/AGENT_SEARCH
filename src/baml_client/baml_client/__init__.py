@@ -35,10 +35,14 @@ https://boundaryml.com/discord
 with EnsureBamlPyImport(__version__) as e:
   e.raise_if_incompatible_version(__version__)
 
-  from . import config, partial_types, tracing, types
+  from . import types
+  from . import tracing
+  from . import partial_types
+  from . import config
   from .config import reset_baml_env_vars
+  
   from .sync_client import b
-
+  
 
 __all__ = [
   "b",

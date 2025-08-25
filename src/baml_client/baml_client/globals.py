@@ -14,15 +14,13 @@
 # pylint: disable=unused-import,line-too-long
 # fmt: off
 from __future__ import annotations
-
 import os
-from typing import Any, Dict
 
 from baml_py import BamlCtxManager, BamlRuntime
 from baml_py.baml_py import BamlError
-from typing_extensions import Literal
-
 from .inlinedbaml import get_baml_files
+from typing_extensions import Literal
+from typing import Dict, Any
 
 DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME = BamlRuntime.from_files(
   "baml_src",
@@ -31,7 +29,7 @@ DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME = BamlRuntime.from_
 )
 DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_CTX = BamlCtxManager(DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME)
 
-def reset_baml_env_vars(env_vars: dict[str, str]):
+def reset_baml_env_vars(env_vars: Dict[str, str]):
   if DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_CTX.allow_reset():
     DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME.reset(
       "baml_src",
@@ -43,9 +41,8 @@ def reset_baml_env_vars(env_vars: dict[str, str]):
     raise BamlError("Cannot reset BAML environment variables while there are active BAML contexts.")
 
 try:
-    from unittest.mock import patch
-
     import dotenv
+    from unittest.mock import patch
 
     # Monkeypatch load_dotenv to call reset_baml_env_vars after execution
     original_load_dotenv = dotenv.load_dotenv

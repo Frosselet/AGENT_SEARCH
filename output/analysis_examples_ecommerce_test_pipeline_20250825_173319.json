@@ -1,0 +1,33 @@
+{
+  "file_path": "examples/ecommerce_test_pipeline.py",
+  "timestamp": "2025-08-25T17:33:19.889916",
+  "analysis": {
+    "complexity_score": 7,
+    "issues": [
+      "Synchronous processing - performance bottleneck",
+      "No observability/logging"
+    ],
+    "modernization_potential": "High",
+    "recommendations": [
+      "Implement Prepare-Fetch-Transform-Save pattern",
+      "Add comprehensive error handling",
+      "Convert to async/await for better performance",
+      "Add structured logging and observability",
+      "Break into smaller, testable functions"
+    ],
+    "performance_improvement": "60-80",
+    "cost_savings": "2000-5000",
+    "estimated_effort": "8-16"
+  },
+  "architecture": {
+    "current_pattern": "Monolithic",
+    "recommended_pattern": "Prepare-Fetch-Transform-Save",
+    "splitting_opportunities": [
+      {
+        "location": "Data processing loop",
+        "reason": "CPU intensive operations can be parallelized",
+        "benefit": "3-5x performance improvement"
+      }
+    ]
+  }
+}

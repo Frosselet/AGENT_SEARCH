@@ -13,14 +13,14 @@
 # flake8: noqa: E501,F401
 # pylint: disable=unused-import,line-too-long
 # fmt: off
-from typing import Any, Dict, List, Optional, Type, TypedDict, Union
+from typing import Any, Dict, List, Optional, Union, TypedDict, Type
+from typing_extensions import NotRequired, Literal
 
 import baml_py
-from typing_extensions import Literal, NotRequired
 
 from . import types
+from .types import Checked, Check
 from .type_builder import TypeBuilder
-from .types import Check, Checked
 
 
 class BamlCallOptions(TypedDict, total=False):
@@ -36,10 +36,10 @@ class HttpRequest:
       self.__runtime = runtime
       self.__ctx_manager = ctx_manager
 
-
+    
     def AnalyzeChatIntent(
         self,
-        message: str,conversationHistory: list[types.ChatMessage],
+        message: str,conversationHistory: List[types.ChatMessage],
         baml_options: BamlCallOptions = {},
     ) -> baml_py.HTTPRequest:
       __tb__ = baml_options.get("tb", None)
@@ -59,7 +59,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def AnalyzeCodeForTriggers(
         self,
         code: str,context: str,
@@ -82,7 +82,30 @@ class HttpRequest:
         __cr__,
         False,
       )
+    
+    def AnalyzePipeline(
+        self,
+        code: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.HTTPRequest:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
 
+      return self.__runtime.build_request_sync(
+        "AnalyzePipeline",
+        {
+          "code": code,
+        },
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+        False,
+      )
+    
     def AnalyzePipelineStructure(
         self,
         code: str,context: str,
@@ -105,7 +128,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def AnalyzeSplitterOptimization(
         self,
         pipeline_code: str,business_requirements: str,performance_constraints: str,
@@ -128,7 +151,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def CheckDeprecation(
         self,
         package_name: str,method_name: str,
@@ -151,7 +174,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def ComparePackageEfficiency(
         self,
         package_name: str,use_case: str,
@@ -174,7 +197,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def CoordinateTransformation(
         self,
         agent_outputs: str,conflicts: str,business_requirements: str,
@@ -197,7 +220,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def ExtractResume(
         self,
         resume: str,
@@ -220,7 +243,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def GenerateCodeExplanation(
         self,
         code: str,question: str,context: str,
@@ -243,10 +266,10 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def GenerateCodeRecommendations(
         self,
-        analysis: types.CodeAnalysisResult,package_info: list[types.PackageInfo],efficiency_data: list[types.EfficiencyComparison],
+        analysis: types.CodeAnalysisResult,package_info: List[types.PackageInfo],efficiency_data: List[types.EfficiencyComparison],
         baml_options: BamlCallOptions = {},
     ) -> baml_py.HTTPRequest:
       __tb__ = baml_options.get("tb", None)
@@ -266,7 +289,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def OptimizeArchitecture(
         self,
         pipeline_code: str,business_requirements: str,performance_targets: str,cost_constraints: str,
@@ -289,7 +312,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def ProcessChatMessage(
         self,
         context: types.ChatContext,
@@ -312,7 +335,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def ResolveConflicts(
         self,
         validation_results: str,agent_outputs: str,business_requirements: str,
@@ -335,7 +358,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
     def SuggestNextSteps(
         self,
         currentState: str,userGoals: str,fileContext: Optional[types.FileContext],
@@ -358,7 +381,30 @@ class HttpRequest:
         __cr__,
         False,
       )
+    
+    def TransformPipeline(
+        self,
+        code: str,target_platform: str,analysis_context: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.HTTPRequest:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
 
+      return self.__runtime.build_request_sync(
+        "TransformPipeline",
+        {
+          "code": code,"target_platform": target_platform,"analysis_context": analysis_context,
+        },
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+        False,
+      )
+    
     def ValidateStrategy(
         self,
         transformation_plan: str,business_requirements: str,risk_tolerance: str,
@@ -381,7 +427,7 @@ class HttpRequest:
         __cr__,
         False,
       )
-
+    
 
 
 class HttpStreamRequest:
@@ -392,10 +438,10 @@ class HttpStreamRequest:
       self.__runtime = runtime
       self.__ctx_manager = ctx_manager
 
-
+    
     def AnalyzeChatIntent(
         self,
-        message: str,conversationHistory: list[types.ChatMessage],
+        message: str,conversationHistory: List[types.ChatMessage],
         baml_options: BamlCallOptions = {},
     ) -> baml_py.HTTPRequest:
       __tb__ = baml_options.get("tb", None)
@@ -415,7 +461,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def AnalyzeCodeForTriggers(
         self,
         code: str,context: str,
@@ -438,7 +484,30 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
+    
+    def AnalyzePipeline(
+        self,
+        code: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.HTTPRequest:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
 
+      return self.__runtime.build_request_sync(
+        "AnalyzePipeline",
+        {
+          "code": code,
+        },
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+        True,
+      )
+    
     def AnalyzePipelineStructure(
         self,
         code: str,context: str,
@@ -461,7 +530,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def AnalyzeSplitterOptimization(
         self,
         pipeline_code: str,business_requirements: str,performance_constraints: str,
@@ -484,7 +553,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def CheckDeprecation(
         self,
         package_name: str,method_name: str,
@@ -507,7 +576,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def ComparePackageEfficiency(
         self,
         package_name: str,use_case: str,
@@ -530,7 +599,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def CoordinateTransformation(
         self,
         agent_outputs: str,conflicts: str,business_requirements: str,
@@ -553,7 +622,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def ExtractResume(
         self,
         resume: str,
@@ -576,7 +645,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def GenerateCodeExplanation(
         self,
         code: str,question: str,context: str,
@@ -599,10 +668,10 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def GenerateCodeRecommendations(
         self,
-        analysis: types.CodeAnalysisResult,package_info: list[types.PackageInfo],efficiency_data: list[types.EfficiencyComparison],
+        analysis: types.CodeAnalysisResult,package_info: List[types.PackageInfo],efficiency_data: List[types.EfficiencyComparison],
         baml_options: BamlCallOptions = {},
     ) -> baml_py.HTTPRequest:
       __tb__ = baml_options.get("tb", None)
@@ -622,7 +691,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def OptimizeArchitecture(
         self,
         pipeline_code: str,business_requirements: str,performance_targets: str,cost_constraints: str,
@@ -645,7 +714,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def ProcessChatMessage(
         self,
         context: types.ChatContext,
@@ -668,7 +737,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def ResolveConflicts(
         self,
         validation_results: str,agent_outputs: str,business_requirements: str,
@@ -691,7 +760,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
     def SuggestNextSteps(
         self,
         currentState: str,userGoals: str,fileContext: Optional[types.FileContext],
@@ -714,7 +783,30 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
+    
+    def TransformPipeline(
+        self,
+        code: str,target_platform: str,analysis_context: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.HTTPRequest:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
 
+      return self.__runtime.build_request_sync(
+        "TransformPipeline",
+        {
+          "code": code,"target_platform": target_platform,"analysis_context": analysis_context,
+        },
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+        True,
+      )
+    
     def ValidateStrategy(
         self,
         transformation_plan: str,business_requirements: str,risk_tolerance: str,
@@ -737,7 +829,7 @@ class HttpStreamRequest:
         __cr__,
         True,
       )
-
+    
 
 
 __all__ = ["HttpRequest", "HttpStreamRequest"]

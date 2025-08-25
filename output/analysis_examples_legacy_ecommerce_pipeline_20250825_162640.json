@@ -1,0 +1,5 @@
+{
+  "error": "'PipelineModernizer' object has no attribute '_create_demo_analysis'",
+  "file_path": "examples/legacy_ecommerce_pipeline.py",
+  "details": "Make sure BAML client is generated and API keys are set"
+}

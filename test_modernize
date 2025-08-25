@@ -1,0 +1,18 @@
+#!/bin/bash
+# Simple test script for pipeline modernization
+
+# Set up environment
+export PYTHONPATH="${PYTHONPATH}:$(dirname "$0")/src"
+
+# Check if BAML client exists
+if [ ! -f "src/baml_client/baml_client/__init__.py" ]; then
+    echo "⚠️  BAML client not found - generating..."
+    if command -v baml-cli &> /dev/null; then
+        uv run baml-cli generate --from baml_src
+    else
+        echo "❌ BAML CLI not available - continuing without it"
+    fi
+fi
+
+# Run the simple CLI
+uv run python src/simple_cli.py "$@"

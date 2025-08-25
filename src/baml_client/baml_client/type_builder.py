@@ -14,22 +14,15 @@
 # pylint: disable=unused-import,line-too-long
 # fmt: off
 import typing
-
-from baml_py.baml_py import ClassBuilder, EnumBuilder, EnumValueBuilder, FieldType
-from baml_py.type_builder import (
-    ClassPropertyBuilder,
-    ClassPropertyViewer,
-    EnumValueViewer,
-)
-from baml_py.type_builder import TypeBuilder as _TypeBuilder
-
+from baml_py.baml_py import FieldType, EnumValueBuilder, EnumBuilder, ClassBuilder
+from baml_py.type_builder import TypeBuilder as _TypeBuilder, ClassPropertyBuilder, ClassPropertyViewer, EnumValueViewer
 from .globals import DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME
 
 
 class TypeBuilder(_TypeBuilder):
     def __init__(self):
         super().__init__(classes=set(
-          ["AgentDecision","AnalysisResults","ArchitectureDecision","BusinessLogic","ChatContext","ChatMessage","ChatResponse","CodeAnalysisResult","CodeRecommendation","ConflictResolution","CostEstimate","CustomRepoInfo","DataFlow","DeprecationAnalysis","EfficiencyComparison","ErrorHandling","FileContext","PackageAlternative","PackageInfo","PerformanceEstimate","PipelineAnalysisResult","PipelineFunction","PipelineStageAnalysis","Resume","SplitterAnalysis","TransformationRequest","TransformationResult","ValidationResult","WorkspaceContext",]
+          ["AgentDecision","AnalysisResults","ArchitectureDecision","BusinessLogic","ChatContext","ChatMessage","ChatResponse","CodeAnalysisResult","CodeRecommendation","ConflictResolution","CostEstimate","CustomRepoInfo","DataFlow","DeprecationAnalysis","EfficiencyComparison","ErrorHandling","FileContext","PackageAlternative","PackageInfo","PerformanceEstimate","PipelineAnalysis","PipelineAnalysisResult","PipelineFunction","PipelineIssue","PipelineRecommendation","PipelineStageAnalysis","PipelineTransformation","Resume","SplitterAnalysis","SplittingOpportunity","TransformationRequest","TransformationResult","ValidationResult","WorkspaceContext",]
         ), enums=set(
           []
         ), runtime=DO_NOT_USE_DIRECTLY_UNLESS_YOU_KNOW_WHAT_YOURE_DOING_RUNTIME)
@@ -116,6 +109,10 @@ class TypeBuilder(_TypeBuilder):
         return PerformanceEstimateAst(self)
 
     @property
+    def PipelineAnalysis(self) -> "PipelineAnalysisAst":
+        return PipelineAnalysisAst(self)
+
+    @property
     def PipelineAnalysisResult(self) -> "PipelineAnalysisResultAst":
         return PipelineAnalysisResultAst(self)
 
@@ -124,8 +121,20 @@ class TypeBuilder(_TypeBuilder):
         return PipelineFunctionAst(self)
 
     @property
+    def PipelineIssue(self) -> "PipelineIssueAst":
+        return PipelineIssueAst(self)
+
+    @property
+    def PipelineRecommendation(self) -> "PipelineRecommendationAst":
+        return PipelineRecommendationAst(self)
+
+    @property
     def PipelineStageAnalysis(self) -> "PipelineStageAnalysisAst":
         return PipelineStageAnalysisAst(self)
+
+    @property
+    def PipelineTransformation(self) -> "PipelineTransformationAst":
+        return PipelineTransformationAst(self)
 
     @property
     def Resume(self) -> "ResumeAst":
@@ -134,6 +143,10 @@ class TypeBuilder(_TypeBuilder):
     @property
     def SplitterAnalysis(self) -> "SplitterAnalysisAst":
         return SplitterAnalysisAst(self)
+
+    @property
+    def SplittingOpportunity(self) -> "SplittingOpportunityAst":
+        return SplittingOpportunityAst(self)
 
     @property
     def TransformationRequest(self) -> "TransformationRequestAst":
@@ -159,7 +172,7 @@ class AgentDecisionAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("AgentDecision")
-        self._properties: set[str] = set([ "agent_name",  "decision",  "confidence",  "reasoning",  "outputs", ])
+        self._properties: typing.Set[str] = set([ "agent_name",  "decision",  "confidence",  "reasoning",  "outputs", ])
         self._props = AgentDecisionProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -174,18 +187,18 @@ class AgentDecisionViewer(AgentDecisionAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class AgentDecisionProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def agent_name(self) -> ClassPropertyViewer:
@@ -207,13 +220,13 @@ class AgentDecisionProperties:
     def outputs(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("outputs"))
 
-
+    
 
 class AnalysisResultsAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("AnalysisResults")
-        self._properties: set[str] = set([ "currentPattern",  "complexityScore",  "performanceImprovement",  "costSavings",  "awsServices",  "feasibility", ])
+        self._properties: typing.Set[str] = set([ "currentPattern",  "complexityScore",  "performanceImprovement",  "costSavings",  "awsServices",  "feasibility", ])
         self._props = AnalysisResultsProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -228,18 +241,18 @@ class AnalysisResultsViewer(AnalysisResultsAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class AnalysisResultsProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def currentPattern(self) -> ClassPropertyViewer:
@@ -265,13 +278,13 @@ class AnalysisResultsProperties:
     def feasibility(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("feasibility"))
 
-
+    
 
 class ArchitectureDecisionAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("ArchitectureDecision")
-        self._properties: set[str] = set([ "primary_service",  "supporting_services",  "pattern",  "splitter_node",  "rationale",  "estimated_performance_improvement",  "estimated_cost_reduction",  "scalability",  "splitter_analysis", ])
+        self._properties: typing.Set[str] = set([ "primary_service",  "supporting_services",  "pattern",  "splitter_node",  "rationale",  "estimated_performance_improvement",  "estimated_cost_reduction",  "scalability",  "splitter_analysis", ])
         self._props = ArchitectureDecisionProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -286,18 +299,18 @@ class ArchitectureDecisionViewer(ArchitectureDecisionAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class ArchitectureDecisionProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def primary_service(self) -> ClassPropertyViewer:
@@ -335,13 +348,13 @@ class ArchitectureDecisionProperties:
     def splitter_analysis(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("splitter_analysis"))
 
-
+    
 
 class BusinessLogicAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("BusinessLogic")
-        self._properties: set[str] = set([ "data_sources",  "transformations",  "outputs",  "business_rules",  "error_handling",  "configuration", ])
+        self._properties: typing.Set[str] = set([ "data_sources",  "transformations",  "outputs",  "business_rules",  "error_handling",  "configuration", ])
         self._props = BusinessLogicProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -356,18 +369,18 @@ class BusinessLogicViewer(BusinessLogicAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class BusinessLogicProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def data_sources(self) -> ClassPropertyViewer:
@@ -393,13 +406,13 @@ class BusinessLogicProperties:
     def configuration(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("configuration"))
 
-
+    
 
 class ChatContextAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("ChatContext")
-        self._properties: set[str] = set([ "userMessage",  "conversationHistory",  "currentFileContext",  "workspaceContext", ])
+        self._properties: typing.Set[str] = set([ "userMessage",  "conversationHistory",  "currentFileContext",  "workspaceContext", ])
         self._props = ChatContextProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -414,18 +427,18 @@ class ChatContextViewer(ChatContextAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class ChatContextProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def userMessage(self) -> ClassPropertyViewer:
@@ -443,13 +456,13 @@ class ChatContextProperties:
     def workspaceContext(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("workspaceContext"))
 
-
+    
 
 class ChatMessageAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("ChatMessage")
-        self._properties: set[str] = set([ "type",  "content",  "timestamp", ])
+        self._properties: typing.Set[str] = set([ "type",  "content",  "timestamp", ])
         self._props = ChatMessageProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -464,18 +477,18 @@ class ChatMessageViewer(ChatMessageAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class ChatMessageProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def type(self) -> ClassPropertyViewer:
@@ -489,13 +502,13 @@ class ChatMessageProperties:
     def timestamp(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("timestamp"))
 
-
+    
 
 class ChatResponseAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("ChatResponse")
-        self._properties: set[str] = set([ "intent",  "confidence",  "content",  "suggestedActions",  "followUpQuestions",  "requiresFileAccess",  "recommendedCommands", ])
+        self._properties: typing.Set[str] = set([ "intent",  "confidence",  "content",  "suggestedActions",  "followUpQuestions",  "requiresFileAccess",  "recommendedCommands", ])
         self._props = ChatResponseProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -510,18 +523,18 @@ class ChatResponseViewer(ChatResponseAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class ChatResponseProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def intent(self) -> ClassPropertyViewer:
@@ -551,13 +564,13 @@ class ChatResponseProperties:
     def recommendedCommands(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("recommendedCommands"))
 
-
+    
 
 class CodeAnalysisResultAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("CodeAnalysisResult")
-        self._properties: set[str] = set([ "packages_detected",  "trigger_reasons",  "recommendations",  "lambda_optimizations", ])
+        self._properties: typing.Set[str] = set([ "packages_detected",  "trigger_reasons",  "recommendations",  "lambda_optimizations", ])
         self._props = CodeAnalysisResultProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -572,18 +585,18 @@ class CodeAnalysisResultViewer(CodeAnalysisResultAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class CodeAnalysisResultProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def packages_detected(self) -> ClassPropertyViewer:
@@ -601,13 +614,13 @@ class CodeAnalysisResultProperties:
     def lambda_optimizations(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("lambda_optimizations"))
 
-
+    
 
 class CodeRecommendationAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("CodeRecommendation")
-        self._properties: set[str] = set([ "type",  "current_code",  "suggested_code",  "reason",  "confidence_score", ])
+        self._properties: typing.Set[str] = set([ "type",  "current_code",  "suggested_code",  "reason",  "confidence_score", ])
         self._props = CodeRecommendationProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -622,18 +635,18 @@ class CodeRecommendationViewer(CodeRecommendationAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class CodeRecommendationProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def type(self) -> ClassPropertyViewer:
@@ -655,13 +668,13 @@ class CodeRecommendationProperties:
     def confidence_score(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("confidence_score"))
 
-
+    
 
 class ConflictResolutionAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("ConflictResolution")
-        self._properties: set[str] = set([ "conflicting_agents",  "conflict_description",  "proposed_solutions",  "final_decision",  "confidence_score", ])
+        self._properties: typing.Set[str] = set([ "conflicting_agents",  "conflict_description",  "proposed_solutions",  "final_decision",  "confidence_score", ])
         self._props = ConflictResolutionProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -676,18 +689,18 @@ class ConflictResolutionViewer(ConflictResolutionAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class ConflictResolutionProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def conflicting_agents(self) -> ClassPropertyViewer:
@@ -709,13 +722,13 @@ class ConflictResolutionProperties:
     def confidence_score(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("confidence_score"))
 
-
+    
 
 class CostEstimateAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("CostEstimate")
-        self._properties: set[str] = set([ "reduction_percentage",  "monthly_savings_usd",  "cost_factors", ])
+        self._properties: typing.Set[str] = set([ "reduction_percentage",  "monthly_savings_usd",  "cost_factors", ])
         self._props = CostEstimateProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -730,18 +743,18 @@ class CostEstimateViewer(CostEstimateAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class CostEstimateProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def reduction_percentage(self) -> ClassPropertyViewer:
@@ -755,13 +768,13 @@ class CostEstimateProperties:
     def cost_factors(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("cost_factors"))
 
-
+    
 
 class CustomRepoInfoAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("CustomRepoInfo")
-        self._properties: set[str] = set([ "repo_name",  "functions_available",  "classes_available",  "latest_version",  "documentation_url", ])
+        self._properties: typing.Set[str] = set([ "repo_name",  "functions_available",  "classes_available",  "latest_version",  "documentation_url", ])
         self._props = CustomRepoInfoProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -776,18 +789,18 @@ class CustomRepoInfoViewer(CustomRepoInfoAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class CustomRepoInfoProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def repo_name(self) -> ClassPropertyViewer:
@@ -809,13 +822,13 @@ class CustomRepoInfoProperties:
     def documentation_url(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("documentation_url"))
 
-
+    
 
 class DataFlowAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("DataFlow")
-        self._properties: set[str] = set([ "type",  "target",  "source",  "line_number", ])
+        self._properties: typing.Set[str] = set([ "type",  "target",  "source",  "line_number", ])
         self._props = DataFlowProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -830,18 +843,18 @@ class DataFlowViewer(DataFlowAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class DataFlowProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def type(self) -> ClassPropertyViewer:
@@ -859,13 +872,13 @@ class DataFlowProperties:
     def line_number(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("line_number"))
 
-
+    
 
 class DeprecationAnalysisAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("DeprecationAnalysis")
-        self._properties: set[str] = set([ "package_name",  "method_name",  "is_deprecated",  "deprecation_version",  "removal_version",  "alternatives",  "migration_notes", ])
+        self._properties: typing.Set[str] = set([ "package_name",  "method_name",  "is_deprecated",  "deprecation_version",  "removal_version",  "alternatives",  "migration_notes", ])
         self._props = DeprecationAnalysisProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -880,18 +893,18 @@ class DeprecationAnalysisViewer(DeprecationAnalysisAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class DeprecationAnalysisProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def package_name(self) -> ClassPropertyViewer:
@@ -921,13 +934,13 @@ class DeprecationAnalysisProperties:
     def migration_notes(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("migration_notes"))
 
-
+    
 
 class EfficiencyComparisonAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("EfficiencyComparison")
-        self._properties: set[str] = set([ "package_name",  "alternatives",  "recommendation",  "performance_notes",  "lambda_compatibility", ])
+        self._properties: typing.Set[str] = set([ "package_name",  "alternatives",  "recommendation",  "performance_notes",  "lambda_compatibility", ])
         self._props = EfficiencyComparisonProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -942,18 +955,18 @@ class EfficiencyComparisonViewer(EfficiencyComparisonAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class EfficiencyComparisonProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def package_name(self) -> ClassPropertyViewer:
@@ -975,13 +988,13 @@ class EfficiencyComparisonProperties:
     def lambda_compatibility(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("lambda_compatibility"))
 
-
+    
 
 class ErrorHandlingAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("ErrorHandling")
-        self._properties: set[str] = set([ "has_try_catch",  "exception_types",  "logging_present", ])
+        self._properties: typing.Set[str] = set([ "has_try_catch",  "exception_types",  "logging_present", ])
         self._props = ErrorHandlingProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -996,18 +1009,18 @@ class ErrorHandlingViewer(ErrorHandlingAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class ErrorHandlingProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def has_try_catch(self) -> ClassPropertyViewer:
@@ -1021,13 +1034,13 @@ class ErrorHandlingProperties:
     def logging_present(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("logging_present"))
 
-
+    
 
 class FileContextAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("FileContext")
-        self._properties: set[str] = set([ "fileName",  "language",  "content",  "analysisResults", ])
+        self._properties: typing.Set[str] = set([ "fileName",  "language",  "content",  "analysisResults", ])
         self._props = FileContextProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1042,18 +1055,18 @@ class FileContextViewer(FileContextAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class FileContextProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def fileName(self) -> ClassPropertyViewer:
@@ -1071,13 +1084,13 @@ class FileContextProperties:
     def analysisResults(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("analysisResults"))
 
-
+    
 
 class PackageAlternativeAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("PackageAlternative")
-        self._properties: set[str] = set([ "name",  "performance_score",  "lambda_size_mb",  "pros",  "cons",  "use_cases", ])
+        self._properties: typing.Set[str] = set([ "name",  "performance_score",  "lambda_size_mb",  "pros",  "cons",  "use_cases", ])
         self._props = PackageAlternativeProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1092,18 +1105,18 @@ class PackageAlternativeViewer(PackageAlternativeAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class PackageAlternativeProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def name(self) -> ClassPropertyViewer:
@@ -1129,13 +1142,13 @@ class PackageAlternativeProperties:
     def use_cases(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("use_cases"))
 
-
+    
 
 class PackageInfoAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("PackageInfo")
-        self._properties: set[str] = set([ "name",  "version",  "description",  "docs_url",  "repo_url",  "is_deprecated",  "deprecated_methods",  "alternative_packages", ])
+        self._properties: typing.Set[str] = set([ "name",  "version",  "description",  "docs_url",  "repo_url",  "is_deprecated",  "deprecated_methods",  "alternative_packages", ])
         self._props = PackageInfoProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1150,18 +1163,18 @@ class PackageInfoViewer(PackageInfoAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class PackageInfoProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def name(self) -> ClassPropertyViewer:
@@ -1195,13 +1208,13 @@ class PackageInfoProperties:
     def alternative_packages(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("alternative_packages"))
 
-
+    
 
 class PerformanceEstimateAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("PerformanceEstimate")
-        self._properties: set[str] = set([ "improvement_percentage",  "bottleneck_reduction",  "scalability_factor", ])
+        self._properties: typing.Set[str] = set([ "improvement_percentage",  "bottleneck_reduction",  "scalability_factor", ])
         self._props = PerformanceEstimateProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1216,18 +1229,18 @@ class PerformanceEstimateViewer(PerformanceEstimateAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class PerformanceEstimateProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def improvement_percentage(self) -> ClassPropertyViewer:
@@ -1241,13 +1254,83 @@ class PerformanceEstimateProperties:
     def scalability_factor(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("scalability_factor"))
 
+    
 
+class PipelineAnalysisAst:
+    def __init__(self, tb: _TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("PipelineAnalysis")
+        self._properties: typing.Set[str] = set([ "complexity_score",  "current_pattern",  "modernization_potential",  "performance_improvement",  "cost_savings",  "estimated_effort",  "issues",  "recommendations",  "splitting_opportunities", ])
+        self._props = PipelineAnalysisProperties(self._bldr, self._properties)
+
+    def type(self) -> FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "PipelineAnalysisProperties":
+        return self._props
+
+
+class PipelineAnalysisViewer(PipelineAnalysisAst):
+    def __init__(self, tb: _TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
+        return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+
+
+
+class PipelineAnalysisProperties:
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties
+
+    
+
+    @property
+    def complexity_score(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("complexity_score"))
+
+    @property
+    def current_pattern(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("current_pattern"))
+
+    @property
+    def modernization_potential(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("modernization_potential"))
+
+    @property
+    def performance_improvement(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("performance_improvement"))
+
+    @property
+    def cost_savings(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("cost_savings"))
+
+    @property
+    def estimated_effort(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("estimated_effort"))
+
+    @property
+    def issues(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("issues"))
+
+    @property
+    def recommendations(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("recommendations"))
+
+    @property
+    def splitting_opportunities(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("splitting_opportunities"))
+
+    
 
 class PipelineAnalysisResultAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("PipelineAnalysisResult")
-        self._properties: set[str] = set([ "current_pattern",  "functions_detected",  "complexity_score",  "migration_feasibility",  "estimated_effort_hours",  "aws_service_recommendations",  "business_logic",  "dependencies",  "data_flow", ])
+        self._properties: typing.Set[str] = set([ "current_pattern",  "functions_detected",  "complexity_score",  "migration_feasibility",  "estimated_effort_hours",  "aws_service_recommendations",  "business_logic",  "dependencies",  "data_flow", ])
         self._props = PipelineAnalysisResultProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1262,18 +1345,18 @@ class PipelineAnalysisResultViewer(PipelineAnalysisResultAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class PipelineAnalysisResultProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def current_pattern(self) -> ClassPropertyViewer:
@@ -1311,13 +1394,13 @@ class PipelineAnalysisResultProperties:
     def data_flow(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("data_flow"))
 
-
+    
 
 class PipelineFunctionAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("PipelineFunction")
-        self._properties: set[str] = set([ "name",  "line_count",  "arguments",  "has_async",  "has_decorators",  "decorators",  "calls_external_apis",  "file_operations",  "database_operations",  "data_transformations", ])
+        self._properties: typing.Set[str] = set([ "name",  "line_count",  "arguments",  "has_async",  "has_decorators",  "decorators",  "calls_external_apis",  "file_operations",  "database_operations",  "data_transformations", ])
         self._props = PipelineFunctionProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1332,18 +1415,18 @@ class PipelineFunctionViewer(PipelineFunctionAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class PipelineFunctionProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def name(self) -> ClassPropertyViewer:
@@ -1385,13 +1468,105 @@ class PipelineFunctionProperties:
     def data_transformations(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("data_transformations"))
 
+    
 
+class PipelineIssueAst:
+    def __init__(self, tb: _TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("PipelineIssue")
+        self._properties: typing.Set[str] = set([ "description",  "severity",  "line_number", ])
+        self._props = PipelineIssueProperties(self._bldr, self._properties)
+
+    def type(self) -> FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "PipelineIssueProperties":
+        return self._props
+
+
+class PipelineIssueViewer(PipelineIssueAst):
+    def __init__(self, tb: _TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
+        return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+
+
+
+class PipelineIssueProperties:
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties
+
+    
+
+    @property
+    def description(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("description"))
+
+    @property
+    def severity(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("severity"))
+
+    @property
+    def line_number(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("line_number"))
+
+    
+
+class PipelineRecommendationAst:
+    def __init__(self, tb: _TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("PipelineRecommendation")
+        self._properties: typing.Set[str] = set([ "description",  "impact",  "effort", ])
+        self._props = PipelineRecommendationProperties(self._bldr, self._properties)
+
+    def type(self) -> FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "PipelineRecommendationProperties":
+        return self._props
+
+
+class PipelineRecommendationViewer(PipelineRecommendationAst):
+    def __init__(self, tb: _TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
+        return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+
+
+
+class PipelineRecommendationProperties:
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties
+
+    
+
+    @property
+    def description(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("description"))
+
+    @property
+    def impact(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("impact"))
+
+    @property
+    def effort(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("effort"))
+
+    
 
 class PipelineStageAnalysisAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("PipelineStageAnalysis")
-        self._properties: set[str] = set([ "stage_name",  "complexity",  "runtime_estimate",  "parallelization_benefit",  "bottleneck_potential",  "split_justification", ])
+        self._properties: typing.Set[str] = set([ "stage_name",  "complexity",  "runtime_estimate",  "parallelization_benefit",  "bottleneck_potential",  "split_justification", ])
         self._props = PipelineStageAnalysisProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1406,18 +1581,18 @@ class PipelineStageAnalysisViewer(PipelineStageAnalysisAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class PipelineStageAnalysisProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def stage_name(self) -> ClassPropertyViewer:
@@ -1443,13 +1618,63 @@ class PipelineStageAnalysisProperties:
     def split_justification(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("split_justification"))
 
+    
 
+class PipelineTransformationAst:
+    def __init__(self, tb: _TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("PipelineTransformation")
+        self._properties: typing.Set[str] = set([ "modernized_code",  "architecture_pattern",  "improvements",  "deployment_notes", ])
+        self._props = PipelineTransformationProperties(self._bldr, self._properties)
+
+    def type(self) -> FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "PipelineTransformationProperties":
+        return self._props
+
+
+class PipelineTransformationViewer(PipelineTransformationAst):
+    def __init__(self, tb: _TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
+        return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+
+
+
+class PipelineTransformationProperties:
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties
+
+    
+
+    @property
+    def modernized_code(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("modernized_code"))
+
+    @property
+    def architecture_pattern(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("architecture_pattern"))
+
+    @property
+    def improvements(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("improvements"))
+
+    @property
+    def deployment_notes(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("deployment_notes"))
+
+    
 
 class ResumeAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("Resume")
-        self._properties: set[str] = set([ "name",  "email",  "experience",  "skills", ])
+        self._properties: typing.Set[str] = set([ "name",  "email",  "experience",  "skills", ])
         self._props = ResumeProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1464,18 +1689,18 @@ class ResumeViewer(ResumeAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class ResumeProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def name(self) -> ClassPropertyViewer:
@@ -1493,13 +1718,13 @@ class ResumeProperties:
     def skills(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("skills"))
 
-
+    
 
 class SplitterAnalysisAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("SplitterAnalysis")
-        self._properties: set[str] = set([ "optimal_split_point",  "split_rationale",  "pipeline_stages_analysis",  "performance_impact",  "cost_impact", ])
+        self._properties: typing.Set[str] = set([ "optimal_split_point",  "split_rationale",  "pipeline_stages_analysis",  "performance_impact",  "cost_impact", ])
         self._props = SplitterAnalysisProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1514,18 +1739,18 @@ class SplitterAnalysisViewer(SplitterAnalysisAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class SplitterAnalysisProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def optimal_split_point(self) -> ClassPropertyViewer:
@@ -1547,13 +1772,59 @@ class SplitterAnalysisProperties:
     def cost_impact(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("cost_impact"))
 
+    
 
+class SplittingOpportunityAst:
+    def __init__(self, tb: _TypeBuilder):
+        _tb = tb._tb # type: ignore (we know how to use this private attribute)
+        self._bldr = _tb.class_("SplittingOpportunity")
+        self._properties: typing.Set[str] = set([ "location",  "reason",  "benefit", ])
+        self._props = SplittingOpportunityProperties(self._bldr, self._properties)
+
+    def type(self) -> FieldType:
+        return self._bldr.field()
+
+    @property
+    def props(self) -> "SplittingOpportunityProperties":
+        return self._props
+
+
+class SplittingOpportunityViewer(SplittingOpportunityAst):
+    def __init__(self, tb: _TypeBuilder):
+        super().__init__(tb)
+
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
+        return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
+
+
+
+class SplittingOpportunityProperties:
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
+        self.__bldr = bldr
+        self.__properties = properties
+
+    
+
+    @property
+    def location(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("location"))
+
+    @property
+    def reason(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("reason"))
+
+    @property
+    def benefit(self) -> ClassPropertyViewer:
+        return ClassPropertyViewer(self.__bldr.property("benefit"))
+
+    
 
 class TransformationRequestAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("TransformationRequest")
-        self._properties: set[str] = set([ "pipeline_code",  "business_requirements",  "target_platform",  "performance_goals", ])
+        self._properties: typing.Set[str] = set([ "pipeline_code",  "business_requirements",  "target_platform",  "performance_goals", ])
         self._props = TransformationRequestProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1568,18 +1839,18 @@ class TransformationRequestViewer(TransformationRequestAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class TransformationRequestProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def pipeline_code(self) -> ClassPropertyViewer:
@@ -1597,13 +1868,13 @@ class TransformationRequestProperties:
     def performance_goals(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("performance_goals"))
 
-
+    
 
 class TransformationResultAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("TransformationResult")
-        self._properties: set[str] = set([ "success",  "transformed_code",  "validation_results",  "infrastructure_code",  "git_workflow_results", ])
+        self._properties: typing.Set[str] = set([ "success",  "transformed_code",  "validation_results",  "infrastructure_code",  "git_workflow_results", ])
         self._props = TransformationResultProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1618,18 +1889,18 @@ class TransformationResultViewer(TransformationResultAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class TransformationResultProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def success(self) -> ClassPropertyViewer:
@@ -1651,13 +1922,13 @@ class TransformationResultProperties:
     def git_workflow_results(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("git_workflow_results"))
 
-
+    
 
 class ValidationResultAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("ValidationResult")
-        self._properties: set[str] = set([ "functional_equivalence",  "performance_maintained",  "security_validated",  "test_coverage_adequate",  "issues_found", ])
+        self._properties: typing.Set[str] = set([ "functional_equivalence",  "performance_maintained",  "security_validated",  "test_coverage_adequate",  "issues_found", ])
         self._props = ValidationResultProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1672,18 +1943,18 @@ class ValidationResultViewer(ValidationResultAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class ValidationResultProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def functional_equivalence(self) -> ClassPropertyViewer:
@@ -1705,13 +1976,13 @@ class ValidationResultProperties:
     def issues_found(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("issues_found"))
 
-
+    
 
 class WorkspaceContextAst:
     def __init__(self, tb: _TypeBuilder):
         _tb = tb._tb # type: ignore (we know how to use this private attribute)
         self._bldr = _tb.class_("WorkspaceContext")
-        self._properties: set[str] = set([ "pythonFiles",  "recentAnalyses",  "projectType", ])
+        self._properties: typing.Set[str] = set([ "pythonFiles",  "recentAnalyses",  "projectType", ])
         self._props = WorkspaceContextProperties(self._bldr, self._properties)
 
     def type(self) -> FieldType:
@@ -1726,18 +1997,18 @@ class WorkspaceContextViewer(WorkspaceContextAst):
     def __init__(self, tb: _TypeBuilder):
         super().__init__(tb)
 
-
-    def list_properties(self) -> list[tuple[str, ClassPropertyViewer]]:
+    
+    def list_properties(self) -> typing.List[typing.Tuple[str, ClassPropertyViewer]]:
         return [(name, ClassPropertyViewer(self._bldr.property(name))) for name in self._properties]
 
 
 
 class WorkspaceContextProperties:
-    def __init__(self, bldr: ClassBuilder, properties: set[str]):
+    def __init__(self, bldr: ClassBuilder, properties: typing.Set[str]):
         self.__bldr = bldr
         self.__properties = properties
 
-
+    
 
     @property
     def pythonFiles(self) -> ClassPropertyViewer:
@@ -1751,7 +2022,7 @@ class WorkspaceContextProperties:
     def projectType(self) -> ClassPropertyViewer:
         return ClassPropertyViewer(self.__bldr.property("projectType"))
 
-
+    
 
 
 

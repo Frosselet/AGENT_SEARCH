@@ -1,0 +1,36 @@
+#!/bin/bash
+# Complete Multi-Agent Pipeline Modernization System
+# Interactive mode with all BAML agents integrated
+
+echo "🤖 Starting Multi-Agent Pipeline Modernization System..."
+
+# Set up environment
+export PYTHONPATH="${PYTHONPATH}:$(dirname "$0")/src"
+
+# Check if BAML client exists
+if [ ! -f "src/baml_client/baml_client/__init__.py" ]; then
+    echo "⚠️  BAML client not found - generating..."
+    if command -v baml-cli &> /dev/null || uv run baml-cli --version &> /dev/null; then
+        uv run baml-cli generate --from baml_src
+        echo "✅ BAML client generated"
+    else
+        echo "❌ BAML CLI not available"
+        echo "💡 Install with: uv add baml-py"
+        echo "🔄 Continuing in demo mode..."
+    fi
+fi
+
+# Check for API keys
+if [ -z "$OPENAI_API_KEY" ] && [ -z "$ANTHROPIC_API_KEY" ]; then
+    echo ""
+    echo "⚠️  No API keys detected"
+    echo "💡 For full AI-powered analysis, set one of:"
+    echo "   export OPENAI_API_KEY=your_openai_key"
+    echo "   export ANTHROPIC_API_KEY=your_anthropic_key"
+    echo ""
+    echo "🔄 Starting in demo mode with static analysis..."
+    echo ""
+fi
+
+# Run the comprehensive multi-agent interactive CLI
+uv run python src/full_interactive_cli.py

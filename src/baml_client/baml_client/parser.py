@@ -13,14 +13,14 @@
 # flake8: noqa: E501,F401
 # pylint: disable=unused-import,line-too-long
 # fmt: off
-from typing import Any, Dict, List, Optional, Type, TypedDict, Union, cast
+from typing import Any, Dict, List, Optional, Union, TypedDict, Type, cast
+from typing_extensions import NotRequired, Literal
 
 import baml_py
-from typing_extensions import Literal, NotRequired
 
-from . import partial_types, types
+from . import types, partial_types
+from .types import Checked, Check
 from .type_builder import TypeBuilder
-from .types import Check, Checked
 
 
 class BamlCallOptions(TypedDict, total=False):
@@ -36,7 +36,7 @@ class LlmResponseParser:
       self.__runtime = runtime
       self.__ctx_manager = ctx_manager
 
-
+    
     def AnalyzeChatIntent(
         self,
         llm_response: str,
@@ -62,7 +62,7 @@ class LlmResponseParser:
       )
 
       return cast(str, parsed)
-
+    
     def AnalyzeCodeForTriggers(
         self,
         llm_response: str,
@@ -88,7 +88,33 @@ class LlmResponseParser:
       )
 
       return cast(types.CodeAnalysisResult, parsed)
+    
+    def AnalyzePipeline(
+        self,
+        llm_response: str,
+        baml_options: BamlCallOptions = {},
+    ) -> types.PipelineAnalysis:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
 
+      parsed = self.__runtime.parse_llm_response(
+        "AnalyzePipeline",
+        llm_response,
+        types,
+        types,
+        partial_types,
+        False,
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+
+      return cast(types.PipelineAnalysis, parsed)
+    
     def AnalyzePipelineStructure(
         self,
         llm_response: str,
@@ -114,7 +140,7 @@ class LlmResponseParser:
       )
 
       return cast(types.PipelineAnalysisResult, parsed)
-
+    
     def AnalyzeSplitterOptimization(
         self,
         llm_response: str,
@@ -140,7 +166,7 @@ class LlmResponseParser:
       )
 
       return cast(types.SplitterAnalysis, parsed)
-
+    
     def CheckDeprecation(
         self,
         llm_response: str,
@@ -166,7 +192,7 @@ class LlmResponseParser:
       )
 
       return cast(types.DeprecationAnalysis, parsed)
-
+    
     def ComparePackageEfficiency(
         self,
         llm_response: str,
@@ -192,7 +218,7 @@ class LlmResponseParser:
       )
 
       return cast(types.EfficiencyComparison, parsed)
-
+    
     def CoordinateTransformation(
         self,
         llm_response: str,
@@ -218,7 +244,7 @@ class LlmResponseParser:
       )
 
       return cast(types.ConflictResolution, parsed)
-
+    
     def ExtractResume(
         self,
         llm_response: str,
@@ -244,7 +270,7 @@ class LlmResponseParser:
       )
 
       return cast(types.Resume, parsed)
-
+    
     def GenerateCodeExplanation(
         self,
         llm_response: str,
@@ -270,12 +296,12 @@ class LlmResponseParser:
       )
 
       return cast(types.ChatResponse, parsed)
-
+    
     def GenerateCodeRecommendations(
         self,
         llm_response: str,
         baml_options: BamlCallOptions = {},
-    ) -> list[types.CodeRecommendation]:
+    ) -> List[types.CodeRecommendation]:
       __tb__ = baml_options.get("tb", None)
       if __tb__ is not None:
         tb = __tb__._tb # type: ignore (we know how to use this private attribute)
@@ -295,8 +321,8 @@ class LlmResponseParser:
         __cr__,
       )
 
-      return cast(list[types.CodeRecommendation], parsed)
-
+      return cast(List[types.CodeRecommendation], parsed)
+    
     def OptimizeArchitecture(
         self,
         llm_response: str,
@@ -322,7 +348,7 @@ class LlmResponseParser:
       )
 
       return cast(types.ArchitectureDecision, parsed)
-
+    
     def ProcessChatMessage(
         self,
         llm_response: str,
@@ -348,7 +374,7 @@ class LlmResponseParser:
       )
 
       return cast(types.ChatResponse, parsed)
-
+    
     def ResolveConflicts(
         self,
         llm_response: str,
@@ -374,7 +400,7 @@ class LlmResponseParser:
       )
 
       return cast(types.ConflictResolution, parsed)
-
+    
     def SuggestNextSteps(
         self,
         llm_response: str,
@@ -400,7 +426,33 @@ class LlmResponseParser:
       )
 
       return cast(types.ChatResponse, parsed)
+    
+    def TransformPipeline(
+        self,
+        llm_response: str,
+        baml_options: BamlCallOptions = {},
+    ) -> types.PipelineTransformation:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
 
+      parsed = self.__runtime.parse_llm_response(
+        "TransformPipeline",
+        llm_response,
+        types,
+        types,
+        partial_types,
+        False,
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+
+      return cast(types.PipelineTransformation, parsed)
+    
     def ValidateStrategy(
         self,
         llm_response: str,
@@ -426,7 +478,7 @@ class LlmResponseParser:
       )
 
       return cast(types.ValidationResult, parsed)
-
+    
 
 
 class LlmStreamParser:
@@ -437,7 +489,7 @@ class LlmStreamParser:
       self.__runtime = runtime
       self.__ctx_manager = ctx_manager
 
-
+    
     def AnalyzeChatIntent(
         self,
         llm_response: str,
@@ -463,7 +515,7 @@ class LlmStreamParser:
       )
 
       return cast(Optional[str], parsed)
-
+    
     def AnalyzeCodeForTriggers(
         self,
         llm_response: str,
@@ -489,7 +541,33 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.CodeAnalysisResult, parsed)
+    
+    def AnalyzePipeline(
+        self,
+        llm_response: str,
+        baml_options: BamlCallOptions = {},
+    ) -> partial_types.PipelineAnalysis:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
 
+      parsed = self.__runtime.parse_llm_response(
+        "AnalyzePipeline",
+        llm_response,
+        types,
+        types,
+        partial_types,
+        True,
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+
+      return cast(partial_types.PipelineAnalysis, parsed)
+    
     def AnalyzePipelineStructure(
         self,
         llm_response: str,
@@ -515,7 +593,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.PipelineAnalysisResult, parsed)
-
+    
     def AnalyzeSplitterOptimization(
         self,
         llm_response: str,
@@ -541,7 +619,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.SplitterAnalysis, parsed)
-
+    
     def CheckDeprecation(
         self,
         llm_response: str,
@@ -567,7 +645,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.DeprecationAnalysis, parsed)
-
+    
     def ComparePackageEfficiency(
         self,
         llm_response: str,
@@ -593,7 +671,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.EfficiencyComparison, parsed)
-
+    
     def CoordinateTransformation(
         self,
         llm_response: str,
@@ -619,7 +697,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.ConflictResolution, parsed)
-
+    
     def ExtractResume(
         self,
         llm_response: str,
@@ -645,7 +723,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.Resume, parsed)
-
+    
     def GenerateCodeExplanation(
         self,
         llm_response: str,
@@ -671,12 +749,12 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.ChatResponse, parsed)
-
+    
     def GenerateCodeRecommendations(
         self,
         llm_response: str,
         baml_options: BamlCallOptions = {},
-    ) -> list[partial_types.CodeRecommendation]:
+    ) -> List[partial_types.CodeRecommendation]:
       __tb__ = baml_options.get("tb", None)
       if __tb__ is not None:
         tb = __tb__._tb # type: ignore (we know how to use this private attribute)
@@ -696,8 +774,8 @@ class LlmStreamParser:
         __cr__,
       )
 
-      return cast(list[partial_types.CodeRecommendation], parsed)
-
+      return cast(List[partial_types.CodeRecommendation], parsed)
+    
     def OptimizeArchitecture(
         self,
         llm_response: str,
@@ -723,7 +801,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.ArchitectureDecision, parsed)
-
+    
     def ProcessChatMessage(
         self,
         llm_response: str,
@@ -749,7 +827,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.ChatResponse, parsed)
-
+    
     def ResolveConflicts(
         self,
         llm_response: str,
@@ -775,7 +853,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.ConflictResolution, parsed)
-
+    
     def SuggestNextSteps(
         self,
         llm_response: str,
@@ -801,7 +879,33 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.ChatResponse, parsed)
+    
+    def TransformPipeline(
+        self,
+        llm_response: str,
+        baml_options: BamlCallOptions = {},
+    ) -> partial_types.PipelineTransformation:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
 
+      parsed = self.__runtime.parse_llm_response(
+        "TransformPipeline",
+        llm_response,
+        types,
+        types,
+        partial_types,
+        True,
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+
+      return cast(partial_types.PipelineTransformation, parsed)
+    
     def ValidateStrategy(
         self,
         llm_response: str,
@@ -827,7 +931,7 @@ class LlmStreamParser:
       )
 
       return cast(partial_types.ValidationResult, parsed)
-
+    
 
 
 __all__ = ["LlmResponseParser", "LlmStreamParser"]

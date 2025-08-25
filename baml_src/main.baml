@@ -296,6 +296,143 @@ function GenerateCodeRecommendations(
   "#
 }
 
+// Pipeline Modernization CLI Functions
+
+class PipelineIssue {
+  description string
+  severity string // "low", "medium", "high", "critical"
+  line_number int?
+}
+
+class PipelineRecommendation {
+  description string
+  impact string // "performance", "cost", "maintainability", "security"
+  effort string // "low", "medium", "high"
+}
+
+class SplittingOpportunity {
+  location string
+  reason string
+  benefit string
+}
+
+class PipelineAnalysis {
+  complexity_score int // 1-10 scale
+  current_pattern string
+  modernization_potential string // "Low", "Medium", "High"
+  performance_improvement int // percentage
+  cost_savings int // estimated USD
+  estimated_effort int // hours
+  issues PipelineIssue[]
+  recommendations PipelineRecommendation[]
+  splitting_opportunities SplittingOpportunity[]
+}
+
+class PipelineTransformation {
+  modernized_code string
+  architecture_pattern string
+  improvements string[]
+  deployment_notes string[]
+}
+
+function AnalyzePipeline(code: string) -> PipelineAnalysis {
+  client GPT4
+  prompt #"
+    You are an expert Python data pipeline analyst. Analyze the following pipeline code for modernization opportunities.
+
+    Code to analyze:
+    ```python
+    {{ code }}
+    ```
+
+    Perform a comprehensive analysis covering:
+
+    1. **Complexity Assessment** (1-10 scale):
+       - Code structure and organization
+       - Function size and responsibility distribution
+       - Error handling patterns
+       - Async/await usage
+
+    2. **Current Architecture Pattern**:
+       - Identify if it follows Prepare-Fetch-Transform-Save, ETL, monolithic, or other patterns
+       - Assess modularity and separation of concerns
+
+    3. **Issues Identification**:
+       - Performance bottlenecks
+       - Missing error handling
+       - Synchronous operations that could be async
+       - Memory usage problems
+       - Security concerns
+
+    4. **Modernization Potential**:
+       - How much benefit modernization would provide
+       - Feasibility of implementing modern patterns
+
+    5. **Performance & Cost Impact**:
+       - Estimated performance improvement percentage
+       - Projected cost savings in USD
+       - Implementation effort in hours
+
+    6. **Splitting Opportunities**:
+       - Where the pipeline could be split for parallelization
+       - Benefits of each potential split point
+       - AWS Lambda optimization opportunities
+
+    Focus on practical, actionable insights that directly improve pipeline performance and maintainability.
+
+    {{ ctx.output_format }}
+  "#
+}
+
+function TransformPipeline(code: string, target_platform: string, analysis_context: string) -> PipelineTransformation {
+  client GPT4
+  prompt #"
+    You are an expert Python architect specializing in pipeline modernization and AWS deployment.
+
+    Transform this legacy pipeline code into a modern, scalable implementation:
+
+    **Original Code:**
+    ```python
+    {{ code }}
+    ```
+
+    **Target Platform:** {{ target_platform }}
+    **Analysis Context:** {{ analysis_context }}
+
+    **Transformation Requirements:**
+
+    1. **Architecture Pattern**: Implement Prepare-Fetch-Transform-Save pattern
+    2. **Modern Python**: Use async/await, proper error handling, type hints
+    3. **AWS Integration**: Optimize for {{ target_platform }} deployment
+    4. **Performance**: Implement parallel processing where beneficial
+    5. **Observability**: Add structured logging and monitoring
+    6. **Error Handling**: Comprehensive exception handling with retries
+
+    **Code Structure:**
+    - Separate classes/functions for each stage (Prepare, Fetch, Transform, Save)
+    - Proper dependency injection and configuration management
+    - Clean separation of business logic from infrastructure concerns
+    - Type hints and docstrings throughout
+
+    **AWS Lambda Optimizations** (if target_platform is aws-lambda):
+    - Memory-efficient code patterns
+    - Minimal cold start overhead
+    - Proper resource cleanup
+    - Environment variable configuration
+    - CloudWatch integration
+
+    **Generate:**
+    1. Complete modernized Python code
+    2. Architecture pattern explanation
+    3. List of key improvements made
+    4. Deployment considerations
+
+    The code should be production-ready and follow Python best practices.
+
+    {{ ctx.output_format }}
+  "#
+}
+
 // Multi-Agent System Functions
 
 function AnalyzePipelineStructure(code: string, context: string) -> PipelineAnalysisResult {

@@ -1,0 +1,19 @@
+#!/bin/bash
+# Pipeline Modernization CLI - Easy access script
+
+# Set up environment
+export PYTHONPATH="${PYTHONPATH}:$(dirname "$0")/src"
+
+# Check if BAML client exists
+if [ ! -f "src/baml_client/__init__.py" ]; then
+    echo "⚠️  BAML client not found - generating..."
+    if command -v baml-cli &> /dev/null; then
+        baml-cli generate --from baml_src
+    else
+        echo "❌ BAML CLI not available - run setup first"
+        exit 1
+    fi
+fi
+
+# Run the CLI with UV
+uv run python src/cli.py "$@"

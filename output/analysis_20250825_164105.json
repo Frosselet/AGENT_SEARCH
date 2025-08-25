@@ -1,0 +1,33 @@
+{
+  "file_path": "examples/legacy_ecommerce_pipeline.py",
+  "timestamp": "2025-08-25T16:41:05.154761",
+  "mode": "demo",
+  "analysis": {
+    "current_pattern": "monolithic",
+    "complexity_score": 8,
+    "migration_feasibility": "medium",
+    "estimated_effort_hours": 32,
+    "aws_service_recommendations": [
+      "Lambda",
+      "Step Functions"
+    ]
+  },
+  "recommendations": [
+    {
+      "type": "pattern_modernization",
+      "current_code": "monolithic_function()",
+      "suggested_code": "prepare_fetch_transform_save_pattern()",
+      "reason": "Break down monolithic structure for better maintainability",
+      "confidence_score": 0.9,
+      "impact": "high"
+    },
+    {
+      "type": "async_optimization",
+      "current_code": "requests.get(url)",
+      "suggested_code": "await httpx.get(url)",
+      "reason": "Replace synchronous requests with async httpx for better performance",
+      "confidence_score": 0.85,
+      "impact": "medium"
+    }
+  ]
+}
