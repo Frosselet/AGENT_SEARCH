@@ -196,7 +196,19 @@ scripts\fix-precommit-windows.bat
 scripts\commit-with-uv.bat "your commit message"
 ```
 
-### Issue 4: Git Configuration Error
+### Issue 4: Pre-commit Configuration Unstaged
+**Problem**: `[ERROR] Your pre-commit configuration is unstaged. git add .pre-commit-config.yaml to fix this.`
+**Solution**: Fix pre-commit configuration staging:
+```cmd
+# Quick fix for this specific error
+scripts\fix-precommit-config.bat
+
+# Or manually
+git add .pre-commit-config.yaml
+git commit -m "your message"
+```
+
+### Issue 5: Git Configuration Error
 **Problem**: `user.useConfigOnly=true` commit error
 **Solution**: Fix Git configuration:
 ```cmd
@@ -209,7 +221,7 @@ git config user.name "Your Name"
 git config user.email "your@email.com"
 ```
 
-### Issue 5: Path Issues
+### Issue 6: Path Issues
 **Problem**: Python packages not found
 **Solution**: Ensure you're running from project root:
 ```cmd
@@ -220,7 +232,7 @@ dir pyproject.toml
 set PYTHONPATH=%CD%\src
 ```
 
-### Issue 6: Git Bash for Shell Scripts
+### Issue 7: Git Bash for Shell Scripts
 Some scripts are shell scripts (.sh). If needed, you can run them with Git Bash:
 ```cmd
 "C:\Program Files\Git\bin\bash.exe" scripts/setup-baml.sh

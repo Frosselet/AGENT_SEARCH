@@ -9,6 +9,17 @@ if "%1"=="" (
 
 echo 🚀 Committing with UV environment...
 
+REM Check if .pre-commit-config.yaml is staged
+git diff --cached --name-only | findstr ".pre-commit-config.yaml" >nul
+if %ERRORLEVEL% neq 0 (
+    echo 🔧 Checking if .pre-commit-config.yaml needs staging...
+    git status --porcelain | findstr ".pre-commit-config.yaml" >nul
+    if %ERRORLEVEL% equ 0 (
+        echo 📁 Staging .pre-commit-config.yaml...
+        git add .pre-commit-config.yaml
+    )
+)
+
 REM Set environment variables for pre-commit
 set PYTHONPATH=%CD%\src
 set PATH=%CD%\.venv\Scripts;%PATH%

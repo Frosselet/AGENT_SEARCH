@@ -54,3 +54,6 @@ echo    git commit -m "your message"
 echo.
 echo    Or use the UV wrapper:
 echo    scripts\commit-with-uv.bat "your message"
+echo.
+echo 🔧 If you get "pre-commit configuration is unstaged" error:
+echo    scripts\fix-precommit-config.bat
