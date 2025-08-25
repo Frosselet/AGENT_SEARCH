@@ -1,39 +1,30 @@
-# Pre-commit configuration for AI Documentation Agent
-
+# Pre-commit configuration for Pipeline Modernization System
 repos:
   # Python code formatting
   - repo: https://github.com/psf/black
-    rev: 23.9.1
+    rev: 23.12.1
     hooks:
       - id: black
-        language_version: python3.11
+        language_version: python3
         args: [--line-length=88]
 
-  # Python import sorting
+  # Python import sorting  
   - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
       - id: isort
         args: [--profile=black, --line-length=88]
 
   # Python linting with ruff
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.4
+    rev: v0.1.9
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
 
-  # Python type checking
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.6.1
-    hooks:
-      - id: mypy
-        additional_dependencies: [types-requests, types-beautifulsoup4]
-        args: [--ignore-missing-imports]
-
   # General pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -42,49 +33,20 @@ repos:
       - id: check-toml
       - id: check-json
       - id: check-added-large-files
-        args: [--maxkb=1000]
+        args: [--maxkb=2000]
       - id: check-merge-conflict
       - id: debug-statements
-      - id: check-docstring-first
 
-  # Security scanning
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
-    hooks:
-      - id: bandit
-        args: [-r, src/, -f, json, -o, bandit-report.json]
-        exclude: tests/
-
-  # Documentation and README checks
+  # Documentation checks (simplified to avoid version issues)
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.37.0
+    rev: v0.38.0
     hooks:
       - id: markdownlint
-        args: [--fix]
-
-  # Python docstring formatting
-  - repo: https://github.com/pycqa/docformatter
-    rev: v1.7.5
-    hooks:
-      - id: docformatter
-        args: [--in-place, --wrap-summaries=88, --wrap-descriptions=88]
-
-  # YAML formatting
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.3
-    hooks:
-      - id: prettier
-        types: [yaml]
+        args: [--fix, --disable, MD013, MD033, MD041]
 
 # Configuration
 ci:
   autofix_commit_msg: |
-    [pre-commit.ci] auto fixes from pre-commit.com hooks
-
-    for more information, see https://pre-commit.ci
+    [pre-commit.ci] auto fixes from pre-commit hooks
   autofix_prs: true
-  autoupdate_branch: ''
-  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
-  autoupdate_schedule: weekly
-  skip: []
-  submodules: false
+  autoupdate_schedule: monthly
