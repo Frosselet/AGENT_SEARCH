@@ -42,30 +42,17 @@ else
     BAML_CMD="baml-cli"
 fi
 
-# Install BAML CLI if not present
-echo "🛠️  Installing BAML CLI..."
-if ! command -v baml-cli &> /dev/null && [[ -z "$VIRTUAL_ENV" ]]; then
-    echo "📦 Installing baml-cli via uv..."
-    uv tool install baml-cli
+# BAML CLI is included with baml-py package
+echo "🛠️  BAML CLI setup..."
+echo "ℹ️  BAML CLI is included with baml-py package (no separate installation needed)"
 
-    # Add to PATH for this session
-    export PATH="$HOME/.local/bin:$PATH"
-    BAML_CMD="baml-cli"
-elif [[ -n "$VIRTUAL_ENV" ]] && ! command -v baml-cli &> /dev/null; then
-    echo "📦 Installing baml-cli in virtual environment..."
-    pip install baml-py
-    BAML_CMD="baml-cli"
+if [[ -z "$VIRTUAL_ENV" ]]; then
+    BAML_CMD="uv run python -m baml_py"
+else
+    BAML_CMD="python -m baml_py"
 fi
 
-# Verify BAML CLI installation
-if ! command -v baml-cli &> /dev/null; then
-    echo "❌ baml-cli installation failed"
-    echo "💡 Try: uv tool install baml-cli"
-    echo "💡 Or: pip install baml-py"
-    exit 1
-fi
-
-echo "✅ BAML CLI installed successfully"
+echo "✅ BAML CLI ready (using: $BAML_CMD)"
 
 # Create proper BAML directory structure
 echo "📁 Setting up BAML directory structure..."
@@ -73,7 +60,7 @@ echo "📁 Setting up BAML directory structure..."
 # Initialize BAML project if baml_src doesn't exist
 if [[ ! -d "baml_src" ]]; then
     echo "🚀 Initializing BAML project..."
-    baml-cli init
+    $BAML_CMD init
 
     echo "✅ BAML project initialized"
 else
@@ -116,7 +103,7 @@ if [[ -f "baml_src/main.baml" ]]; then
 
     # Try to generate the client to validate syntax
     echo "🔄 Testing BAML syntax by attempting generation..."
-    if baml-cli generate --from baml_src 2>/dev/null; then
+    if $BAML_CMD generate --from baml_src 2>/dev/null; then
         echo "✅ BAML syntax validation passed"
     else
         echo "❌ BAML syntax has issues - will try to fix common problems"
@@ -169,8 +156,8 @@ echo "⚙️  Generating BAML Python client..."
 mkdir -p src/baml_client
 
 # Generate the client
-echo "🔄 Running baml-cli generate..."
-if baml-cli generate --from baml_src; then
+echo "🔄 Running BAML generate..."
+if $BAML_CMD generate --from baml_src; then
     echo "✅ BAML client generated successfully!"
 
     # Verify the generated files
@@ -349,10 +336,10 @@ echo "🧪 To test your BAML setup:"
 echo "   python scripts/test-baml.py"
 echo ""
 echo "🔄 To regenerate BAML client after changes:"
-echo "   baml-cli generate --from baml_src --to src/baml_client"
+echo "   uv run python -m baml_py generate --from baml_src"
 echo ""
 echo "📖 To validate BAML syntax:"
-echo "   baml-cli validate baml_src/main.baml"
+echo "   uv run python -m baml_py validate baml_src/main.baml"
 echo ""
 echo "💡 Next steps:"
 echo "   1. Set up your OpenAI API key: export OPENAI_API_KEY=your_key"

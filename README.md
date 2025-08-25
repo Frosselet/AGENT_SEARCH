@@ -75,7 +75,8 @@ uv add baml-py
 
 4. **Generate BAML Client**
 ```bash
-uv run baml-cli generate --from baml/ --to src/baml_client/
+# BAML CLI is included with baml-py package
+uv run python -m baml_py generate --from baml_src/
 ```
 
 ### Using Makefile (Recommended)
@@ -110,32 +111,32 @@ async def main():
         aws_lambda_focus=True,
         scraping_enabled=True
     )
-    
+
     # Initialize agent
     agent = DocumentationAIAgent(config)
     await agent.initialize()
-    
+
     # Analyze your code
     code = '''
     import pandas as pd
     import requests
-    
+
     def process_data(csv_file):
         df = pd.read_csv(csv_file)
         result = df.groupby('category').sum()
-        
-        response = requests.post('https://api.example.com/data', 
+
+        response = requests.post('https://api.example.com/data',
                                json=result.to_dict())
         return response.json()
     '''
-    
+
     # Get recommendations
     result = await agent.analyze_and_recommend(
         code=code,
         context="AWS Lambda data processing pipeline",
         requirements=["pandas==1.5.3", "requests==2.31.0"]
     )
-    
+
     # Review recommendations
     for rec in result['recommendations']:
         print(f"{rec['type']}: {rec['reason']}")
@@ -183,7 +184,7 @@ agent = DocumentationAIAgent(config)
 The agent automatically triggers documentation lookup when it detects:
 
 1. **Package Import Detection**: New package imports that might need efficiency analysis
-2. **Method/Function Analysis**: Potentially deprecated methods 
+2. **Method/Function Analysis**: Potentially deprecated methods
 3. **Performance Context**: Data processing patterns requiring optimization
 4. **AWS Lambda Context**: Lambda-specific constraints and optimizations
 5. **Custom Repository References**: References to proprietary packages
@@ -199,19 +200,19 @@ Example BAML function:
 ```baml
 function AnalyzeCodeForTriggers(code: string, context: string) -> CodeAnalysisResult {
   client GPT4
-  
+
   prompt #"
     Analyze this Python code for data pipeline optimization opportunities:
-    
+
     Code: {{ code }}
     Context: {{ context }}
-    
+
     Look for:
     1. Package imports that might need efficiency analysis
-    2. Methods that could be deprecated  
+    2. Methods that could be deprecated
     3. AWS Lambda optimization opportunities
     4. References to custom repositories
-    
+
     {{ ctx.output_format }}
   "#
 }
@@ -241,7 +242,7 @@ The agent provides comprehensive analysis including:
 ```json
 {
   "package_name": "pandas",
-  "method_name": "append", 
+  "method_name": "append",
   "severity": "critical",
   "alternatives": ["pd.concat()"],
   "migration_guide": "Replace df.append() with pd.concat([df, new_data])"
@@ -370,7 +371,7 @@ results = []
 for file_path in code_files:
     with open(file_path) as f:
         code = f.read()
-    
+
     result = await agent.analyze_and_recommend(code, f"File: {file_path}")
     results.append(result)
 ```

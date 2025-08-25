@@ -59,13 +59,12 @@ else
     echo "⚠️  BAML setup script not found, proceeding with basic setup..."
 
     # Basic BAML setup fallback
-    echo "📦 Installing BAML CLI..."
-    uv tool install baml-cli
+    echo "ℹ️  BAML CLI is included with baml-py package..."
 
     # Create baml_src if it doesn't exist
     if [[ ! -d "baml_src" ]]; then
         echo "🚀 Initializing BAML project..."
-        baml-cli init
+        uv run python -m baml_py init
     fi
 
     # Move main.baml if needed
@@ -78,7 +77,7 @@ else
     # Generate client
     echo "⚙️  Generating BAML client..."
     mkdir -p src/baml_client
-    baml-cli generate --from baml_src
+    uv run python -m baml_py generate --from baml_src
 fi
 
 echo "✅ BAML setup completed"
