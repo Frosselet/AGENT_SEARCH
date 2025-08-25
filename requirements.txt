@@ -1,0 +1,49 @@
+# AI Documentation Agent Dependencies
+
+# Core dependencies
+asyncio-compat>=0.1.2
+httpx>=0.24.0
+aiofiles>=23.1.0
+
+# Data processing and analysis
+pandas>=1.5.0
+numpy>=1.24.0
+
+# Web scraping and parsing
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+selectolax>=0.3.0
+
+# Database and caching
+sqlite3  # Built-in with Python
+aiosqlite>=0.19.0
+
+# BAML framework
+# Note: Install BAML according to their documentation
+# pip install baml-py
+
+# Package management and analysis
+packaging>=23.0
+pip-api>=0.0.30
+
+# AWS Lambda optimization
+boto3>=1.28.0  # Optional, for Lambda deployment helpers
+
+# Testing dependencies (optional)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Development dependencies (optional)
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0
+
+# Optional performance packages for comparison testing
+polars>=0.18.0  # Alternative to pandas
+orjson>=3.9.0   # Alternative to json
+ujson>=5.8.0    # Alternative to json
+
+# Documentation and examples
+jupyter>=1.0.0  # For notebook examples
+matplotlib>=3.7.0  # For visualization examples
+seaborn>=0.12.0     # For visualization examples

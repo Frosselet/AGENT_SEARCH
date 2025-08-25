@@ -1,0 +1,193 @@
+{
+  "name": "pipeline-modernizer",
+  "displayName": "Pipeline Modernizer - AI Assistant",
+  "description": "🤖 AI-powered pipeline modernization with multi-agent system integration",
+  "version": "1.0.0",
+  "publisher": "your-company",
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Other",
+    "Snippets",
+    "Debuggers"
+  ],
+  "keywords": [
+    "ai",
+    "pipeline",
+    "modernization",
+    "aws",
+    "lambda",
+    "automation",
+    "refactoring"
+  ],
+  "activationEvents": [
+    "onLanguage:python",
+    "onCommand:pipelineModernizer.analyze",
+    "onCommand:pipelineModernizer.transform",
+    "onCommand:pipelineModernizer.chat"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "pipelineModernizer.analyze",
+        "title": "📊 Analyze Pipeline",
+        "category": "Pipeline Modernizer"
+      },
+      {
+        "command": "pipelineModernizer.transform",
+        "title": "⚡ Transform Pipeline", 
+        "category": "Pipeline Modernizer"
+      },
+      {
+        "command": "pipelineModernizer.chat",
+        "title": "🤖 Open AI Assistant",
+        "category": "Pipeline Modernizer"
+      },
+      {
+        "command": "pipelineModernizer.showDashboard",
+        "title": "📊 Show Dashboard",
+        "category": "Pipeline Modernizer"
+      },
+      {
+        "command": "pipelineModernizer.quickFix",
+        "title": "🔧 Quick Fix Pipeline",
+        "category": "Pipeline Modernizer"
+      },
+      {
+        "command": "pipelineModernizer.togglePreventionMode",
+        "title": "🛡️ Toggle Prevention Mode",
+        "category": "Pipeline Modernizer"
+      },
+      {
+        "command": "pipelineModernizer.createNewPipeline", 
+        "title": "📝 Create New Pipeline",
+        "category": "Pipeline Modernizer"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceExtname == .py",
+          "command": "pipelineModernizer.analyze",
+          "group": "pipeline@1"
+        },
+        {
+          "when": "resourceExtname == .py",
+          "command": "pipelineModernizer.transform",
+          "group": "pipeline@2"
+        },
+        {
+          "when": "resourceExtname == .py",
+          "command": "pipelineModernizer.chat",
+          "group": "pipeline@3"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "resourceExtname == .py",
+          "command": "pipelineModernizer.analyze",
+          "group": "pipeline"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "pipelineModernizer.treeView",
+          "name": "Pipeline Modernizer",
+          "when": "pipelineModernizer.enabled"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pipelineModernizer",
+          "title": "Pipeline Modernizer",
+          "icon": "$(robot)"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Pipeline Modernizer",
+      "properties": {
+        "pipelineModernizer.autoAnalyze": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically analyze Python files for modernization opportunities"
+        },
+        "pipelineModernizer.showInlineHints": {
+          "type": "boolean", 
+          "default": true,
+          "description": "Show inline suggestions and code lenses"
+        },
+        "pipelineModernizer.aiModel": {
+          "type": "string",
+          "enum": ["gpt-4", "claude-3", "gemini-pro"],
+          "default": "gpt-4",
+          "description": "AI model to use for analysis and transformations"
+        },
+        "pipelineModernizer.awsProfile": {
+          "type": "string",
+          "default": "default",
+          "description": "AWS profile for deployment"
+        },
+        "pipelineModernizer.githubIntegration": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic PR creation"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "pipelineModernizer.chat",
+        "key": "ctrl+shift+m",
+        "mac": "cmd+shift+m",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "pipelineModernizer.analyze",
+        "key": "ctrl+shift+a",
+        "mac": "cmd+shift+a",
+        "when": "editorTextFocus && resourceExtname == .py"
+      },
+      {
+        "command": "pipelineModernizer.transform",
+        "key": "ctrl+shift+t", 
+        "mac": "cmd+shift+t",
+        "when": "editorTextFocus && resourceExtname == .py"
+      }
+    ],
+    "languages": [
+      {
+        "id": "pipeline-config",
+        "aliases": ["Pipeline Config"],
+        "extensions": [".pipeline.json", ".modernize.json"]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "16.x",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "markdown-it": "^13.0.1",
+    "marked": "^9.1.2"
+  }
+}
