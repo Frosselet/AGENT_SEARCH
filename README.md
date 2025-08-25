@@ -51,9 +51,17 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 ### Installation
 
 1. **Quick Setup** (recommended)
+
+**Linux/macOS:**
 ```bash
 # Clone and setup everything
 ./scripts/setup.sh
+```
+
+**Windows:**
+```cmd
+# Clone and setup everything
+scripts\setup.bat
 ```
 
 2. **Manual Setup**
