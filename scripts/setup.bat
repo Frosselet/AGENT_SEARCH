@@ -98,10 +98,29 @@ if %ERRORLEVEL% equ 0 (
     echo 💡 Install Node.js if you want to develop the VS Code extension
 )
 
-REM Step 4: Pre-commit Setup
+REM Step 4: Git and Pre-commit Setup
 echo.
-echo 🔧 Step 4: Pre-commit setup...
-echo ==============================
+echo 🔧 Step 4: Git and pre-commit setup...
+echo ====================================
+
+REM Fix Git configuration issues
+echo 🔧 Checking Git configuration...
+
+git config user.name >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo ⚠️  Git user.name not set - you may need to configure it
+    echo 💡 Run: git config user.name "Your Name"
+)
+
+git config user.email >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo ⚠️  Git user.email not set - you may need to configure it
+    echo 💡 Run: git config user.email "your@email.com"
+)
+
+REM Fix user.useConfigOnly issue
+git config user.useConfigOnly false >nul 2>&1
+echo ✅ Fixed Git configuration issues
 
 REM Check if pre-commit is available
 uv run python -c "import pre_commit" >nul 2>&1
@@ -114,7 +133,7 @@ if %ERRORLEVEL% equ 0 (
     uv run pre-commit install
 )
 
-echo ✅ Pre-commit setup completed
+echo ✅ Git and pre-commit setup completed
 
 REM Step 5: Directory Structure
 echo.

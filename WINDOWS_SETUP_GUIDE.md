@@ -43,6 +43,21 @@ cd AGENT_SEARCH
 scripts\setup.bat
 ```
 
+## ⚡ Quick Fix for Git Issues
+
+If you're getting git commit errors, run this first:
+
+```cmd
+# Fix all git and pre-commit issues
+scripts\fix-git-windows.bat
+```
+
+This will:
+- ✅ Fix `user.useConfigOnly=true` error
+- ✅ Set up Git user name and email if missing
+- ✅ Fix pre-commit hooks for Windows
+- ✅ Test everything works
+
 ## 🔧 Manual Setup (if needed)
 
 ### 1. Create Virtual Environment and Install Dependencies
@@ -170,7 +185,31 @@ uv run python -m baml_py generate --from baml_src
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### Issue 3: Path Issues
+### Issue 3: Pre-commit Hook Error
+**Problem**: `pre-commit not found. Did you forget to activate your virtualenv?`
+**Solution**: Fix pre-commit hooks for Windows:
+```cmd
+# Quick fix
+scripts\fix-precommit-windows.bat
+
+# Or commit using UV wrapper
+scripts\commit-with-uv.bat "your commit message"
+```
+
+### Issue 4: Git Configuration Error
+**Problem**: `user.useConfigOnly=true` commit error
+**Solution**: Fix Git configuration:
+```cmd
+# Complete Git fix
+scripts\fix-git-windows.bat
+
+# Or manually
+git config user.useConfigOnly false
+git config user.name "Your Name"
+git config user.email "your@email.com"
+```
+
+### Issue 5: Path Issues
 **Problem**: Python packages not found
 **Solution**: Ensure you're running from project root:
 ```cmd
@@ -181,7 +220,7 @@ dir pyproject.toml
 set PYTHONPATH=%CD%\src
 ```
 
-### Issue 4: Git Bash for Shell Scripts
+### Issue 6: Git Bash for Shell Scripts
 Some scripts are shell scripts (.sh). If needed, you can run them with Git Bash:
 ```cmd
 "C:\Program Files\Git\bin\bash.exe" scripts/setup-baml.sh
