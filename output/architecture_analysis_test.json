@@ -1,0 +1,88 @@
+{
+  "analysis_summary": {
+    "timestamp": "2025-08-26T05:54:49.155388",
+    "duration_seconds": 0.1,
+    "baml_available": true,
+    "error": "BamlClientHttpError(client_name=GPT4, message=Request failed with status code: 401 Unauthorized. {\"error\":{\"message\":\"Incorrect API key provided: $OPENAI_***_KEY. You can find your API key at https://platform.openai.com/account/api-keys.\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":\"invalid_api_key\"}}, status_code=401)"
+  },
+  "recommendation": {
+    "primary_service": "aws-lambda",
+    "supporting_services": [
+      "s3",
+      "cloudwatch"
+    ],
+    "architecture_pattern": "Prepare-Fetch-Transform-Save",
+    "optimal_split_point": "transform",
+    "rationale": "Default recommendation due to analysis failure"
+  },
+  "performance_analysis": {
+    "improvement_estimate": "30-50%",
+    "bottleneck_reduction": "Medium",
+    "scalability_factor": 2.0
+  },
+  "cost_analysis": {
+    "reduction_estimate": "15-25%",
+    "monthly_savings_usd": 300,
+    "cost_factors": [
+      "Serverless efficiency"
+    ]
+  },
+  "splitter_analysis": {
+    "optimal_split_point": "transform",
+    "split_rationale": "Default split at transform stage for CPU-intensive operations",
+    "stage_analyses": [
+      {
+        "stage_name": "prepare",
+        "complexity": "Low",
+        "runtime_estimate": "1-2 seconds",
+        "parallelization_benefit": "Low",
+        "bottleneck_potential": "Low",
+        "split_justification": null
+      },
+      {
+        "stage_name": "fetch",
+        "complexity": "High",
+        "runtime_estimate": "10-30 seconds",
+        "parallelization_benefit": "High",
+        "bottleneck_potential": "High",
+        "split_justification": "API calls can be parallelized"
+      },
+      {
+        "stage_name": "transform",
+        "complexity": "High",
+        "runtime_estimate": "20-60 seconds",
+        "parallelization_benefit": "High",
+        "bottleneck_potential": "High",
+        "split_justification": "Data processing benefits from parallel execution"
+      },
+      {
+        "stage_name": "save",
+        "complexity": "Medium",
+        "runtime_estimate": "5-15 seconds",
+        "parallelization_benefit": "Medium",
+        "bottleneck_potential": "Medium",
+        "split_justification": null
+      }
+    ]
+  },
+  "service_comparison": {
+    "recommended_service": "aws-lambda",
+    "service_details": {},
+    "recommendation_rationale": "Conservative default recommendation"
+  },
+  "deployment_guide": {
+    "deployment_steps": [
+      "Package for Lambda",
+      "Deploy",
+      "Monitor"
+    ],
+    "infrastructure_code": "# See documentation for infrastructure setup",
+    "monitoring_setup": [
+      "Basic CloudWatch setup"
+    ],
+    "security_considerations": [
+      "IAM roles",
+      "Encryption"
+    ]
+  }
+}

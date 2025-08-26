@@ -1,0 +1,188 @@
+{
+  "analysis_summary": {
+    "timestamp": "2025-08-26T05:48:35.720869",
+    "duration_seconds": 0.000181,
+    "repositories_analyzed": 8,
+    "patterns_discovered": 4,
+    "templates_generated": 3
+  },
+  "accessible_repositories": [
+    {
+      "name": "data-contract-bindings",
+      "type": "package",
+      "purpose": "Data contract schemas and validation helpers",
+      "accessible": true
+    },
+    {
+      "name": "tatami-behaviors",
+      "type": "package",
+      "purpose": "Enterprise behaviors for logging, events, and retries",
+      "accessible": true
+    },
+    {
+      "name": "enterprise-logger",
+      "type": "package",
+      "purpose": "Structured logging connected to DataDog",
+      "accessible": true
+    },
+    {
+      "name": "eventbridge-utils",
+      "type": "package",
+      "purpose": "EventBridge integration utilities",
+      "accessible": true
+    },
+    {
+      "name": "payment-pipeline-v2",
+      "type": "reference",
+      "purpose": "Golden standard payment processing pipeline",
+      "accessible": true
+    },
+    {
+      "name": "customer-data-pipeline",
+      "type": "reference",
+      "purpose": "Excellent data processing patterns",
+      "accessible": true
+    },
+    {
+      "name": "lambda-pipeline-template",
+      "type": "template",
+      "purpose": "Standard AWS Lambda structure template",
+      "accessible": true
+    },
+    {
+      "name": "terraform-pipeline-modules",
+      "type": "template",
+      "purpose": "Reusable infrastructure modules",
+      "accessible": true
+    }
+  ],
+  "package_patterns": {
+    "data_contract_validation": {
+      "pattern_type": "data_contract",
+      "use_cases": [
+        "Data validation",
+        "Schema enforcement",
+        "Nested field access"
+      ],
+      "benefits": [
+        "Type safety",
+        "Automatic validation",
+        "Standardized schemas"
+      ],
+      "frequency": 5,
+      "code_example": "\nfrom data_contract_bindings import CustomerSchema, OrderSchema\nfrom data_contract_bindings.helpers import validate_schema, get_nested_field\n\n@validate_schema(CustomerSchema)\ndef process_customer_data..."
+    },
+    "structured_logging": {
+      "pattern_type": "logging",
+      "use_cases": [
+        "Centralized logging",
+        "DataDog integration",
+        "Structured logs"
+      ],
+      "benefits": [
+        "Better observability",
+        "Consistent log format",
+        "Easy searching"
+      ],
+      "frequency": 5,
+      "code_example": "\nfrom tatami_behaviors import StructuredLogger\nfrom tatami_behaviors.decorators import with_logging\n\nlogger = StructuredLogger(__name__)\n\n@with_logging(level=\"INFO\", context=True)\nasync def process_da..."
+    },
+    "event_emission": {
+      "pattern_type": "events",
+      "use_cases": [
+        "Event-driven architecture",
+        "Service decoupling",
+        "State notifications"
+      ],
+      "benefits": [
+        "Loose coupling",
+        "Scalability",
+        "Event sourcing"
+      ],
+      "frequency": 4,
+      "code_example": "\nfrom tatami_behaviors.decorators import with_events\nfrom eventbridge_utils.patterns import publish_domain_event\n\n@with_events(event_type=\"payment_processed\")\nasync def process_payment(payment_data):\n..."
+    },
+    "retry_behavior": {
+      "pattern_type": "retry",
+      "use_cases": [
+        "API calls",
+        "Database operations",
+        "Network requests"
+      ],
+      "benefits": [
+        "Resilience",
+        "Fault tolerance",
+        "Automatic recovery"
+      ],
+      "frequency": 4,
+      "code_example": "\nfrom tatami_behaviors.decorators import with_retry\n\n@with_retry(max_attempts=3, backoff_strategy=\"exponential\")\nasync def call_external_api(endpoint, data):\n    return await make_api_call(endpoint, d..."
+    }
+  },
+  "reference_patterns": {
+    "payment_pipeline": {
+      "pattern": "Prepare-Fetch-Transform-Save",
+      "phases": [
+        "validate_payment",
+        "fetch_customer",
+        "process_transaction",
+        "save_result"
+      ],
+      "enterprise_packages": [
+        "data_contract_bindings",
+        "tatami_behaviors",
+        "eventbridge_utils"
+      ],
+      "key_features": [
+        "EventBridge integration",
+        "Data contract validation",
+        "Retry logic"
+      ]
+    },
+    "data_pipeline": {
+      "pattern": "Batch Processing with Events",
+      "phases": [
+        "prepare_batch",
+        "fetch_data",
+        "transform_batch",
+        "save_batch"
+      ],
+      "enterprise_packages": [
+        "tatami_behaviors",
+        "data_contract_bindings"
+      ],
+      "key_features": [
+        "Error handling",
+        "Batch optimization",
+        "Progress tracking"
+      ]
+    },
+    "lambda_template": {
+      "pattern": "Serverless Pipeline",
+      "phases": [
+        "validate_input",
+        "process_event",
+        "emit_result"
+      ],
+      "enterprise_packages": [
+        "all"
+      ],
+      "key_features": [
+        "Configuration management",
+        "Monitoring",
+        "Cost optimization"
+      ]
+    }
+  },
+  "code_templates": {
+    "payment_pipeline": "#!/usr/bin/env python3\n\"\"\"\nPayment Pipeline Template\nGenerated by Enterprise Package Intelligence Agent\n\nPattern: Prepare-Fetch-Transform-Save\nFeatures: EventBridge integration, Data contract validation, Retry logic\n\"\"\"\n\nimport asyncio\nimport logging\nfrom datetime import datetime\nfrom typing import Any, Dict, List\n\n# Enterprise package imports\n\nfrom data_contract_bindings import BaseSchema\nfrom data_contract_bindings.helpers import validate_schema, get_nested_field\n\nfrom tatami_behaviors import StructuredLogger, EventEmitter\nfrom tatami_behaviors.decorators import with_logging, with_retry, with_events\n\nfrom eventbridge_utils import EventPublisher\nfrom eventbridge_utils.patterns import publish_domain_event\n\n\n# Initialize enterprise components\nlogger = StructuredLogger(__name__)\nevent_emitter = EventEmitter()\n\n\nclass EnterprisePaymentpipeline:\n    \"\"\"Enterprise-compliant payment pipeline implementation.\"\"\"\n    \n    def __init__(self, config: Dict[str, Any]):\n        self.config = config\n        \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def validate_payment(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Validate Payment phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting validate_payment phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement validate_payment logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed validate_payment phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"validate_payment phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def fetch_customer(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Fetch Customer phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting fetch_customer phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement fetch_customer logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed fetch_customer phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"fetch_customer phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def process_transaction(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Process Transaction phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting process_transaction phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement process_transaction logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed process_transaction phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"process_transaction phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def save_result(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Save Result phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting save_result phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement save_result logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed save_result phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"save_result phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_events(event_type=\"pipeline.completed\")\n    async def run_pipeline(self, input_data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"Execute the complete payment pipeline pipeline.\"\"\"\n        logger.info(\"Starting payment_pipeline pipeline execution\")\n        \n        data = input_data\n        \n        data = await self.validate_payment(data)\n        data = await self.fetch_customer(data)\n        data = await self.process_transaction(data)\n        data = await self.save_result(data)\n        \n        # Emit completion event\n        await publish_domain_event(\n            event_type=\"payment_pipeline.completed\",\n            data=data,\n            source=\"payment-pipeline-service\"\n        )\n        \n        logger.info(\"Pipeline execution completed successfully\")\n        return data\n\n\n# Example usage\nasync def main():\n    \"\"\"Example usage of the enterprise payment pipeline.\"\"\"\n    config = {\"environment\": \"development\"}\n    pipeline = EnterprisePaymentpipeline(config)\n    \n    sample_data = {\"example\": \"data\"}\n    result = await pipeline.run_pipeline(sample_data)\n    \n    print(\"Pipeline completed:\", result)\n\n\nif __name__ == \"__main__\":\n    asyncio.run(main())\n",
+    "data_pipeline": "#!/usr/bin/env python3\n\"\"\"\nData Pipeline Template\nGenerated by Enterprise Package Intelligence Agent\n\nPattern: Batch Processing with Events\nFeatures: Error handling, Batch optimization, Progress tracking\n\"\"\"\n\nimport asyncio\nimport logging\nfrom datetime import datetime\nfrom typing import Any, Dict, List\n\n# Enterprise package imports\n\nfrom data_contract_bindings import BaseSchema\nfrom data_contract_bindings.helpers import validate_schema, get_nested_field\n\nfrom tatami_behaviors import StructuredLogger, EventEmitter\nfrom tatami_behaviors.decorators import with_logging, with_retry, with_events\n\n\n# Initialize enterprise components\nlogger = StructuredLogger(__name__)\nevent_emitter = EventEmitter()\n\n\nclass EnterpriseDatapipeline:\n    \"\"\"Enterprise-compliant data pipeline implementation.\"\"\"\n    \n    def __init__(self, config: Dict[str, Any]):\n        self.config = config\n        \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def prepare_batch(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Prepare Batch phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting prepare_batch phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement prepare_batch logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed prepare_batch phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"prepare_batch phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def fetch_data(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Fetch Data phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting fetch_data phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement fetch_data logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed fetch_data phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"fetch_data phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def transform_batch(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Transform Batch phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting transform_batch phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement transform_batch logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed transform_batch phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"transform_batch phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def save_batch(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Save Batch phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting save_batch phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement save_batch logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed save_batch phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"save_batch phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_events(event_type=\"pipeline.completed\")\n    async def run_pipeline(self, input_data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"Execute the complete data pipeline pipeline.\"\"\"\n        logger.info(\"Starting data_pipeline pipeline execution\")\n        \n        data = input_data\n        \n        data = await self.prepare_batch(data)\n        data = await self.fetch_data(data)\n        data = await self.transform_batch(data)\n        data = await self.save_batch(data)\n        \n        # Emit completion event\n        await publish_domain_event(\n            event_type=\"data_pipeline.completed\",\n            data=data,\n            source=\"data-pipeline-service\"\n        )\n        \n        logger.info(\"Pipeline execution completed successfully\")\n        return data\n\n\n# Example usage\nasync def main():\n    \"\"\"Example usage of the enterprise data pipeline.\"\"\"\n    config = {\"environment\": \"development\"}\n    pipeline = EnterpriseDatapipeline(config)\n    \n    sample_data = {\"example\": \"data\"}\n    result = await pipeline.run_pipeline(sample_data)\n    \n    print(\"Pipeline completed:\", result)\n\n\nif __name__ == \"__main__\":\n    asyncio.run(main())\n",
+    "lambda_template": "#!/usr/bin/env python3\n\"\"\"\nLambda Template Template\nGenerated by Enterprise Package Intelligence Agent\n\nPattern: Serverless Pipeline\nFeatures: Configuration management, Monitoring, Cost optimization\n\"\"\"\n\nimport asyncio\nimport logging\nfrom datetime import datetime\nfrom typing import Any, Dict, List\n\n# Enterprise package imports\n\nfrom data_contract_bindings import BaseSchema\nfrom data_contract_bindings.helpers import validate_schema, get_nested_field\n\nfrom tatami_behaviors import StructuredLogger, EventEmitter\nfrom tatami_behaviors.decorators import with_logging, with_retry, with_events\n\nfrom eventbridge_utils import EventPublisher\nfrom eventbridge_utils.patterns import publish_domain_event\n\n\n# Initialize enterprise components\nlogger = StructuredLogger(__name__)\nevent_emitter = EventEmitter()\n\n\nclass EnterpriseLambdatemplate:\n    \"\"\"Enterprise-compliant lambda template implementation.\"\"\"\n    \n    def __init__(self, config: Dict[str, Any]):\n        self.config = config\n        \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def validate_input(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Validate Input phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting validate_input phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement validate_input logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed validate_input phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"validate_input phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def process_event(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Process Event phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting process_event phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement process_event logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed process_event phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"process_event phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_logging(level=\"INFO\", context=True)\n    @with_retry(max_attempts=3, backoff_strategy=\"exponential\")\n    async def emit_result(self, data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"\n        Emit Result phase of the pipeline.\n        \n        Args:\n            data: Input data for this phase\n            \n        Returns:\n            Processed data for next phase\n        \"\"\"\n        logger.info(f\"Starting emit_result phase\", extra={\"data_size\": len(str(data))})\n        \n        try:\n            # TODO: Implement emit_result logic here\n            result = data  # Placeholder\n            \n            logger.info(f\"Completed emit_result phase successfully\")\n            return result\n            \n        except Exception as e:\n            logger.error(f\"emit_result phase failed\", extra={\"error\": str(e)})\n            raise\n            \n\n    @with_events(event_type=\"pipeline.completed\")\n    async def run_pipeline(self, input_data: Dict[str, Any]) -> Dict[str, Any]:\n        \"\"\"Execute the complete lambda template pipeline.\"\"\"\n        logger.info(\"Starting lambda_template pipeline execution\")\n        \n        data = input_data\n        \n        data = await self.validate_input(data)\n        data = await self.process_event(data)\n        data = await self.emit_result(data)\n        \n        # Emit completion event\n        await publish_domain_event(\n            event_type=\"lambda_template.completed\",\n            data=data,\n            source=\"lambda-template-service\"\n        )\n        \n        logger.info(\"Pipeline execution completed successfully\")\n        return data\n\n\n# Example usage\nasync def main():\n    \"\"\"Example usage of the enterprise lambda template.\"\"\"\n    config = {\"environment\": \"development\"}\n    pipeline = EnterpriseLambdatemplate(config)\n    \n    sample_data = {\"example\": \"data\"}\n    result = await pipeline.run_pipeline(sample_data)\n    \n    print(\"Pipeline completed:\", result)\n\n\nif __name__ == \"__main__\":\n    asyncio.run(main())\n"
+  },
+  "recommendations": [
+    "Implement data contract validation for all data structures",
+    "Replace print statements with structured logging",
+    "Add event emission for all state changes",
+    "Implement retry logic for external API calls",
+    "Follow Prepare-Fetch-Transform-Save pattern consistently"
+  ]
+}

@@ -18,6 +18,11 @@ from typing import Optional
 # Add the src directory to the path to import baml_client
 sys.path.insert(0, str(Path(__file__).parent))
 
+from architecture_optimizer_agent import ArchitectureOptimizerCLI
+from enterprise_package_agent import EnterprisePackageCLI
+from master_orchestrator import OrchestratorCLI
+from validation_agent import ValidationCLI
+
 try:
     from baml_client.baml_client import b
 
@@ -62,7 +67,8 @@ class PipelineModernizer:
         """Analyze a Python pipeline file for modernization opportunities."""
         if not BAML_AVAILABLE:
             raise RuntimeError(
-                "BAML client not available. Please run 'uv run baml-cli generate --from baml_src' to generate the client."
+                "BAML client not available. Please run "
+                "'uv run baml-cli generate --from baml_src' to generate the client."
             )
 
         try:
@@ -407,7 +413,8 @@ print("Modern pipeline template - to be implemented")
 def create_cli_parser() -> argparse.ArgumentParser:
     """Create the CLI argument parser."""
     parser = argparse.ArgumentParser(
-        description="Pipeline Modernization CLI - AI-powered pipeline analysis and modernization",
+        description="Pipeline Modernization CLI - AI-powered pipeline "
+        "analysis and modernization",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -482,6 +489,125 @@ Examples:
         help="Target platform",
     )
 
+    # Orchestrated analysis command
+    orchestrate_parser = subparsers.add_parser(
+        "orchestrate",
+        help="Run orchestrated multi-agent analysis with conflict resolution",
+    )
+    orchestrate_parser.add_argument(
+        "file_path", help="Path to the pipeline file to analyze"
+    )
+    orchestrate_parser.add_argument(
+        "--business-requirements",
+        default="General pipeline modernization",
+        help="Business requirements and context",
+    )
+    orchestrate_parser.add_argument(
+        "--performance-targets",
+        default="Improve performance and scalability",
+        help="Performance goals and targets",
+    )
+    orchestrate_parser.add_argument(
+        "--cost-constraints",
+        default="Optimize for cost efficiency",
+        help="Budget and cost optimization requirements",
+    )
+    orchestrate_parser.add_argument(
+        "--output", help="Output file path for orchestration results"
+    )
+
+    # Validation command
+    validate_parser = subparsers.add_parser(
+        "validate", help="Validate modernized pipeline against original"
+    )
+    validate_parser.add_argument("original_file", help="Path to original pipeline file")
+    validate_parser.add_argument(
+        "modernized_file", help="Path to modernized pipeline file"
+    )
+    validate_parser.add_argument(
+        "--output", help="Output file path for validation report"
+    )
+    validate_parser.add_argument(
+        "--performance-target",
+        type=int,
+        default=50,
+        help="Performance improvement target percentage",
+    )
+    validate_parser.add_argument(
+        "--quality-minimum",
+        type=int,
+        default=7,
+        help="Minimum code quality score (1-10)",
+    )
+
+    # Rules command
+    rules_parser = subparsers.add_parser(
+        "rules", help="Display PIPELINE.md rules and constraints"
+    )
+    rules_parser.add_argument(
+        "--section",
+        choices=["constraints", "checklist", "standards", "all"],
+        default="all",
+        help="Which section to display",
+    )
+
+    # Enterprise packages command
+    enterprise_parser = subparsers.add_parser(
+        "enterprise", help="Enterprise package analysis and modernization"
+    )
+    enterprise_subparsers = enterprise_parser.add_subparsers(
+        dest="enterprise_action", help="Enterprise actions"
+    )
+
+    # Enterprise ecosystem analysis
+    ecosystem_parser = enterprise_subparsers.add_parser(
+        "analyze", help="Analyze enterprise package ecosystem"
+    )
+    ecosystem_parser.add_argument("--output", help="Output file for analysis results")
+
+    # Enterprise modernization
+    modernize_enterprise_parser = enterprise_subparsers.add_parser(
+        "modernize", help="Modernize pipeline with enterprise packages"
+    )
+    modernize_enterprise_parser.add_argument(
+        "file_path", help="Path to pipeline file to modernize"
+    )
+    modernize_enterprise_parser.add_argument(
+        "--type",
+        default="data_processing",
+        choices=["data_processing", "payment", "customer", "notification"],
+        help="Type of pipeline for better template selection",
+    )
+    modernize_enterprise_parser.add_argument(
+        "--output", help="Output file for modernized code"
+    )
+
+    # Architecture optimization command
+    architecture_parser = subparsers.add_parser(
+        "architecture", help="Optimize pipeline architecture and recommend AWS services"
+    )
+    architecture_parser.add_argument(
+        "file_path", help="Path to pipeline file to analyze"
+    )
+    architecture_parser.add_argument(
+        "--business-requirements",
+        default="General pipeline modernization",
+        help="Business requirements and context",
+    )
+    architecture_parser.add_argument(
+        "--performance-targets",
+        default="Improve performance and scalability",
+        help="Performance goals and constraints",
+    )
+    architecture_parser.add_argument(
+        "--cost-constraints",
+        default="Optimize for cost efficiency",
+        help="Budget and cost optimization requirements",
+    )
+    architecture_parser.add_argument(
+        "--output", help="Output file for architecture analysis"
+    )
+
     return parser
 
 
@@ -546,6 +672,371 @@ async def main():
                 print("\n📈 Expected improvements:")
                 print(f"   Performance: {analysis['performance_improvement']}")
                 print(f"   Cost savings: {analysis['cost_savings']}")
+
+        elif args.command == "orchestrate":
+            print(f"🎯 Running orchestrated multi-agent analysis: {args.file_path}")
+            orchestrator_cli = OrchestratorCLI()
+
+            result = await orchestrator_cli.run_full_analysis(
+                file_path=args.file_path,
+                business_requirements=args.business_requirements,
+                performance_targets=args.performance_targets,
+                cost_constraints=args.cost_constraints,
+            )
+
+            print("\n" + "=" * 80)
+            print("ORCHESTRATED ANALYSIS RESULTS")
+            print("=" * 80)
+
+            summary = result["orchestration_summary"]
+            print(f"🤖 Agents executed: {summary['agents_executed']}")
+            print(f"⚠️  Conflicts detected: {summary['conflicts_detected']}")
+            print(f"✅ Resolution status: {summary['resolution_status']}")
+
+            if result["recommended_actions"]:
+                print("\n🎯 Recommended Actions (Top 5):")
+                for i, action in enumerate(result["recommended_actions"][:5], 1):
+                    priority_emoji = {"high": "🔴", "medium": "🟡", "low": "🟢"}.get(
+                        action["priority"], "⚪"
+                    )
+                    print(
+                        f"   {i}. {priority_emoji} {action['action']} (Confidence: {action['confidence']:.1f})"
+                    )
+
+            if result["conflicts"]:
+                print("\n⚠️  Conflicts detected:")
+                for conflict in result["conflicts"]:
+                    severity_emoji = {"high": "🚨", "medium": "⚠️", "low": "ℹ️"}.get(
+                        conflict["severity"], "❓"
+                    )
+                    print(
+                        f"   {severity_emoji} {conflict['type']}: {conflict['description']}"
+                    )
+
+            priority_info = result["implementation_priority"]
+            print(f"\n📋 Implementation Priority: {priority_info['priority_level']}")
+            print(f"💡 Recommendation: {priority_info['recommendation']}")
+
+            # Display PIPELINE.md rule compliance
+            if result.get("rule_compliance"):
+                compliance = result["rule_compliance"]
+                print("\n📋 PIPELINE.md RULE COMPLIANCE:")
+                if compliance["compliant"]:
+                    print("   ✅ ALL CONSTRAINTS SATISFIED")
+                else:
+                    print("   ❌ CONSTRAINT VIOLATIONS DETECTED:")
+                    for violation in compliance["violations"]:
+                        print(f"      🚫 {violation}")
+
+                if compliance.get("warnings"):
+                    print("   ⚠️ WARNINGS:")
+                    for warning in compliance["warnings"]:
+                        print(f"      ⚠️ {warning}")
+
+            if args.output:
+                with open(args.output, "w", encoding="utf-8") as f:
+                    json.dump(result, f, indent=2, default=str)
+                print(f"\n📄 Full results saved to: {args.output}")
+
+        elif args.command == "validate":
+            print("🔍 Validating modernized pipeline against original...")
+            print(f"   Original: {args.original_file}")
+            print(f"   Modernized: {args.modernized_file}")
+
+            validation_cli = ValidationCLI()
+            requirements = {
+                "performance_improvement_target": args.performance_target,
+                "quality_score_minimum": args.quality_minimum,
+                "security_issues_maximum": 0,
+                "test_coverage_minimum": 80,
+            }
+
+            result = await validation_cli.validate_pipeline_files(
+                original_file=args.original_file,
+                modernized_file=args.modernized_file,
+                output_file=args.output,
+                requirements=requirements,
+            )
+
+            print("\n" + "=" * 80)
+            print("VALIDATION RESULTS")
+            print("=" * 80)
+
+            summary = result["validation_summary"]
+            compliance = result["compliance_score"]
+
+            print(f"🏆 Overall Status: {summary['overall_status'].upper()}")
+            print(
+                f"📊 Compliance Score: {compliance['overall_score']}% (Grade: {compliance['grade']})"
+            )
+            print(f"⏱️  Validation Duration: {summary['duration_seconds']:.2f}s")
+
+            # Show individual validation results
+            validations = [
+                "code_quality",
+                "functionality",
+                "performance",
+                "security",
+                "tests",
+            ]
+            print("\n📋 Individual Validation Results:")
+
+            for validation_type in validations:
+                validation_result = result.get(validation_type, {})
+                status_emoji = "✅" if validation_result.get("passed") else "❌"
+                score = compliance["individual_scores"].get(validation_type, 0)
+                print(f"   {status_emoji} {validation_type.title()}: {score}%")
+
+            # Show recommendations
+            if result.get("recommendations"):
+                print("\n💡 Recommendations:")
+                for i, rec in enumerate(result["recommendations"], 1):
+                    print(f"   {i}. {rec}")
+
+            # Show key metrics
+            if result.get("performance", {}).get("improvement_percentage"):
+                improvement = result["performance"]["improvement_percentage"]
+                print(f"\n🚀 Performance Improvement: {improvement:.1f}%")
+
+            if result.get("security", {}).get("security_issues"):
+                security_issues = len(result["security"]["security_issues"])
+                print(f"🔒 Security Issues: {security_issues}")
+
+        elif args.command == "rules":
+            print("📋 PIPELINE.md RULES AND CONSTRAINTS")
+            print("=" * 80)
+
+            # Load and display PIPELINE.md rules
+            try:
+                from master_orchestrator import PipelineRules
+
+                rules = PipelineRules()
+                rules_summary = rules.get_rules_summary()
+
+                if args.section in ["constraints", "all"]:
+                    print("\n🚫 NON-NEGOTIABLE CONSTRAINTS:")
+                    constraints = rules_summary["non_negotiable_constraints"]
+
+                    print("\n   Performance Requirements:")
+                    perf = constraints["performance"]
+                    print(
+                        f"   • Minimum improvement: {perf['min_improvement_percent']}%"
+                    )
+                    print(
+                        f"   • Maximum Lambda runtime: {perf['max_lambda_runtime_minutes']} minutes"
+                    )
+                    print(f"   • Minimum quality score: {perf['min_quality_score']}/10")
+                    print(
+                        f"   • Maximum security issues: {perf['max_security_issues']}"
+                    )
+                    print(f"   • Minimum test coverage: {perf['min_test_coverage']}%")
+
+                    print("\n   Architecture Requirements:")
+                    arch = constraints["architecture"]
+                    print(f"   • Required pattern: {arch['required_pattern']}")
+                    print(f"   • Maximum function lines: {arch['max_function_lines']}")
+                    print(f"   • Async/await required: {arch['required_async']}")
+                    print(
+                        f"   • Error handling required: {arch['required_error_handling']}"
+                    )
+
+                    print("\n   Security Requirements:")
+                    sec = constraints["security"]
+                    print(
+                        f"   • No hardcoded secrets: {sec['forbidden_hardcoded_secrets']}"
+                    )
+                    print(
+                        f"   • Environment variables required: {sec['required_env_vars']}"
+                    )
+                    print(
+                        f"   • Input validation required: {sec['required_input_validation']}"
+                    )
+
+                if args.section in ["standards", "all"]:
+                    print("\n📝 CODE STANDARDS:")
+                    for standard in rules_summary["code_standards"]:
+                        print(f"   • {standard}")
+
+                if args.section in ["checklist", "all"]:
+                    print("\n✅ SUCCESS CRITERIA:")
+                    targets = rules_summary["performance_targets"]
+                    print(f"   • Performance improvement: {targets['improvement']}")
+                    print(f"   • Code quality score: {targets['quality_score']}")
+                    print(f"   • Test coverage: {targets['test_coverage']}")
+                    print(
+                        f"   • Architecture: {rules_summary['required_architecture']}"
+                    )
+                    print(
+                        f"   • Security: {', '.join(rules_summary['security_requirements'])}"
+                    )
+
+                print("\n💡 For complete rules, see PIPELINE.md file")
+
+            except Exception as e:
+                print(f"❌ Error loading PIPELINE.md rules: {e}")
+                print("💡 Make sure PIPELINE.md exists in the project root")
+
+        elif args.command == "enterprise":
+            if args.enterprise_action == "analyze":
+                print("📦 Analyzing enterprise package ecosystem...")
+                enterprise_cli = EnterprisePackageCLI()
+
+                result = await enterprise_cli.analyze_enterprise_ecosystem(args.output)
+
+                print("\n" + "=" * 80)
+                print("ENTERPRISE ECOSYSTEM ANALYSIS")
+                print("=" * 80)
+
+                summary = result["analysis_summary"]
+                print(f"🏢 Repositories analyzed: {summary['repositories_analyzed']}")
+                print(f"🧩 Patterns discovered: {summary['patterns_discovered']}")
+                print(f"🏗️ Templates generated: {summary['templates_generated']}")
+                print(f"⏱️ Analysis duration: {summary['duration_seconds']:.2f}s")
+
+                print("\n📦 Available Package Patterns:")
+                for name, pattern in result["package_patterns"].items():
+                    print(
+                        f"   • {name}: {pattern['pattern_type']} - {', '.join(pattern['use_cases'][:2])}"
+                    )
+
+                print("\n🏢 Enterprise Repositories:")
+                for repo in result["accessible_repositories"]:
+                    status_emoji = "✅" if repo["accessible"] else "⚠️"
+                    print(
+                        f"   {status_emoji} {repo['name']} ({repo['type']}): {repo['purpose']}"
+                    )
+
+                print("\n💡 Enterprise Recommendations:")
+                for i, rec in enumerate(result["recommendations"][:5], 1):
+                    print(f"   {i}. {rec}")
+
+                if len(result["recommendations"]) > 5:
+                    print(f"   ... and {len(result['recommendations']) - 5} more")
+
+            elif args.enterprise_action == "modernize":
+                print("🏭 Modernizing pipeline with enterprise packages...")
+                print(f"   File: {args.file_path}")
+                print(f"   Pipeline type: {args.type}")
+
+                enterprise_cli = EnterprisePackageCLI()
+
+                result = await enterprise_cli.modernize_with_enterprise(
+                    file_path=args.file_path,
+                    pipeline_type=args.type,
+                    output_file=args.output,
+                )
+
+                print("\n" + "=" * 80)
+                print("ENTERPRISE MODERNIZATION RESULTS")
+                print("=" * 80)
+
+                patterns_used = result["enterprise_patterns_used"]
+                print(f"📦 Enterprise patterns applied: {len(patterns_used)}")
+                for pattern in patterns_used:
+                    print(f"   • {pattern}")
+
+                compliance = result["compliance_check"]
+                print(
+                    f"\n📋 Enterprise Compliance: {'✅ PASSED' if compliance['compliant'] else '❌ FAILED'}"
+                )
+                print(f"   Compliance score: {compliance['score']}%")
+
+                if compliance["violations"]:
+                    print("   Violations:")
+                    for violation in compliance["violations"]:
+                        print(f"     🚫 {violation}")
+
+                benefits = result["modernization_benefits"]
+                print("\n💡 Modernization Benefits:")
+                print(f"   • Standardization: +{benefits['standardization']}%")
+                print(f"   • Maintainability: +{benefits['maintainability']}%")
+                print(f"   • Time saved: ~{benefits['time_saved_hours']} hours")
+                print(f"   • Bug reduction: ~{benefits['reduced_bugs']}%")
+
+            else:
+                print("❌ Unknown enterprise action. Use 'analyze' or 'modernize'")
+
+        elif args.command == "architecture":
+            print(f"🏗️ Optimizing architecture for pipeline: {args.file_path}")
+            print(f"   Business requirements: {args.business_requirements}")
+            print(f"   Performance targets: {args.performance_targets}")
+            print(f"   Cost constraints: {args.cost_constraints}")
+
+            architecture_cli = ArchitectureOptimizerCLI()
+
+            result = await architecture_cli.optimize_pipeline_architecture(
+                file_path=args.file_path,
+                business_requirements=args.business_requirements,
+                performance_targets=args.performance_targets,
+                cost_constraints=args.cost_constraints,
+                output_file=args.output,
+            )
+
+            print("\n" + "=" * 80)
+            print("ARCHITECTURE OPTIMIZATION RESULTS")
+            print("=" * 80)
+
+            summary = result["analysis_summary"]
+            print(f"⏱️  Analysis duration: {summary['duration_seconds']:.2f}s")
+            print(
+                f"🤖 BAML integration: {'✅ Active' if summary['baml_available'] else '⚠️ Fallback mode'}"
+            )
+
+            rec = result["recommendation"]
+            print("\n🏗️ Architecture Recommendation:")
+            print(f"   Primary service: {rec['primary_service']}")
+            print(f"   Architecture pattern: {rec['architecture_pattern']}")
+            print(f"   Optimal split point: {rec['optimal_split_point']}")
+            print(
+                f"   Supporting services: {', '.join(rec.get('supporting_services', []))}"
+            )
+
+            perf = result["performance_analysis"]
+            print("\n⚡ Performance Analysis:")
+            print(f"   Expected improvement: {perf['improvement_estimate']}")
+            print(f"   Bottleneck reduction: {perf['bottleneck_reduction']}")
+            print(f"   Scalability factor: {perf['scalability_factor']}x")
+
+            cost = result["cost_analysis"]
+            print("\n💰 Cost Analysis:")
+            print(f"   Expected reduction: {cost['reduction_estimate']}")
+            print(f"   Monthly savings: ${cost['monthly_savings_usd']}")
+            print(f"   Key factors: {', '.join(cost.get('cost_factors', [])[:2])}")
+
+            splitter = result["splitter_analysis"]
+            print("\n✂️ Splitter Analysis:")
+            print(f"   Optimal split point: {splitter['optimal_split_point']}")
+            print(f"   Split rationale: {splitter['split_rationale'][:100]}...")
+
+            if splitter.get("stage_analyses"):
+                print("\n📋 Stage Analysis Summary:")
+                for stage in splitter["stage_analyses"]:
+                    complexity_emoji = {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(
+                        stage["complexity"], "⚪"
+                    )
+                    bottleneck_emoji = {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(
+                        stage["bottleneck_potential"], "⚪"
+                    )
+                    print(
+                        f"   {stage['stage_name'].title()}: {complexity_emoji} complexity, {bottleneck_emoji} bottleneck risk"
+                    )
+
+            service_comp = result["service_comparison"]
+            print("\n🔍 Service Comparison:")
+            print(f"   Recommended: {service_comp['recommended_service']}")
+            print(f"   Rationale: {service_comp['recommendation_rationale'][:80]}...")
+
+            deploy = result["deployment_guide"]
+            print(f"\n🚀 Deployment Steps ({len(deploy['deployment_steps'])} total):")
+            for i, step in enumerate(deploy["deployment_steps"][:3], 1):
+                print(f"   {i}. {step}")
+            if len(deploy["deployment_steps"]) > 3:
+                print(f"   ... and {len(deploy['deployment_steps']) - 3} more steps")
+
+            print(f"\n💡 Rationale: {rec['rationale'][:150]}...")
+
+            if args.output:
+                print(f"\n📄 Complete analysis saved to: {args.output}")
 
     except KeyboardInterrupt:
         print("\n⚠️  Operation cancelled by user")
