@@ -22,7 +22,7 @@ scripts\fix-git-setup.bat
    ```bash
    # macOS/Linux
    rm -rf ~/.cache/pre-commit/
-   
+
    # Windows
    rmdir /s /q "%USERPROFILE%\.cache\pre-commit"
    ```
@@ -37,7 +37,7 @@ scripts\fix-git-setup.bat
    ```bash
    # Remove problematic hooks temporarily
    pre-commit uninstall
-   
+
    # Reinstall with fixed config
    pre-commit install
    ```
@@ -85,7 +85,7 @@ git config user.email "your.email@example.com"
 git init
 
 # Configure user (required)
-git config user.name "Your Name" 
+git config user.name "Your Name"
 git config user.email "your.email@example.com"
 
 # Optional: Configure global settings
@@ -152,7 +152,7 @@ git status
 
 # Stage changes
 git add src/                 # Add source code changes
-git add vscode-extension/    # Add extension changes  
+git add vscode-extension/    # Add extension changes
 git add baml/               # Add BAML configuration changes
 git add *.md                # Add documentation changes
 
@@ -209,7 +209,7 @@ Add these to your `~/.gitconfig`:
 The fixed `.pre-commit-config.yaml` includes:
 
 - **black**: Python code formatting
-- **isort**: Import sorting  
+- **isort**: Import sorting
 - **ruff**: Fast Python linting
 - **standard hooks**: Trailing whitespace, YAML/JSON validation
 - **markdownlint**: Documentation formatting
@@ -235,7 +235,7 @@ pre-commit run --all-files
 
 ```
 main                    # Production-ready code
-├── develop            # Integration branch  
+├── develop            # Integration branch
 ├── feature/web-agent  # Web data extraction
 ├── feature/multimodal # Multimodal intelligence
 └── hotfix/git-setup   # Critical fixes
@@ -246,7 +246,7 @@ main                    # Production-ready code
 ```bash
 # Format: <type>: <description>
 git commit -m "feat: add real-time prevention mode to VS Code extension"
-git commit -m "fix: resolve pre-commit configuration compatibility issues" 
+git commit -m "fix: resolve pre-commit configuration compatibility issues"
 git commit -m "docs: update specialized agents roadmap with UX scenarios"
 git commit -m "refactor: optimize BAML function generation for web APIs"
 ```
@@ -360,7 +360,7 @@ analysis_cache/
 1. ✅ **Run the automated fix script**
 2. 📝 **Configure your git user settings**
 3. 🔄 **Test committing changes**
-4. 🌐 **Set up remote repository**  
+4. 🌐 **Set up remote repository**
 5. 🚀 **Start your development workflow**
 
 Your repository is now ready for professional version control! 🎉

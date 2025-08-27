@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Splitter Analysis Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 40px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .metrics { display: flex; justify-content: space-around; margin: 30px 0; }
+        .metric { text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+        .metric h3 { margin: 0; color: #495057; }
+        .metric p { margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: #007bff; }
+        .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0; }
+        .chart-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stages-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .stages-table th, .stages-table td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        .stages-table th { background-color: #f8f9fa; font-weight: 600; }
+        .complexity-low { color: #28a745; }
+        .complexity-medium { color: #ffc107; }
+        .complexity-high { color: #dc3545; }
+        .recommended { background-color: #d4edda; font-weight: bold; }
+        .implementation { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✂️ Splitter Analysis Results</h1>
+            <p>Optimal parallelization strategy for your pipeline</p>
+        </div>
+
+        <div class="metrics">
+            <div class="metric">
+                <h3>Recommended Split</h3>
+                <p>Transform</p>
+            </div>
+            <div class="metric">
+                <h3>Performance Gain</h3>
+                <p>40-60%</p>
+            </div>
+            <div class="metric">
+                <h3>Scalability</h3>
+                <p>2.5x</p>
+            </div>
+            <div class="metric">
+                <h3>Cost Savings</h3>
+                <p>$400/month</p>
+            </div>
+        </div>
+
+        <div class="charts">
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="bottleneckChart"></canvas>
+            </div>
+        </div>
+
+        <h2>Stage Analysis</h2>
+        <table class="stages-table">
+            <thead>
+                <tr>
+                    <th>Stage</th>
+                    <th>Complexity</th>
+                    <th>Runtime Estimate</th>
+                    <th>Parallelization Benefit</th>
+                    <th>Bottleneck Risk</th>
+                    <th>Justification</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr class="">
+                    <td><strong>Prepare</strong></td>
+                    <td class="complexity-low">Low</td>
+                    <td>2-5 seconds</td>
+                    <td>Low</td>
+                    <td>Low</td>
+                    <td>Sequential data preparation</td>
+                </tr>
+
+                <tr class="">
+                    <td><strong>Fetch</strong></td>
+                    <td class="complexity-medium">Medium</td>
+                    <td>10-30 seconds</td>
+                    <td>High</td>
+                    <td>High</td>
+                    <td>I/O operations can be parallelized</td>
+                </tr>
+
+                <tr class="recommended">
+                    <td><strong>Transform</strong></td>
+                    <td class="complexity-high">High</td>
+                    <td>20-60 seconds</td>
+                    <td>High</td>
+                    <td>High</td>
+                    <td>CPU-intensive operations</td>
+                </tr>
+
+                <tr class="">
+                    <td><strong>Save</strong></td>
+                    <td class="complexity-medium">Medium</td>
+                    <td>5-15 seconds</td>
+                    <td>Medium</td>
+                    <td>Medium</td>
+                    <td>I/O operations with some constraints</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <div class="implementation">
+            <h2>🎯 Recommendation</h2>
+            <p><strong>Split Point:</strong> Transform stage</p>
+            <p><strong>Rationale:</strong> Default recommendation due to analysis failure</p>
+        </div>
+    </div>
+
+    <script>
+        // Performance Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Prepare', 'Fetch', 'Transform', 'Save'],
+                datasets: [{
+                    label: 'Parallelization Benefit',
+                    data: [1, 3, 3, 2],
+                    backgroundColor: ["'#ff6b6b'", "'#51cf66'", "'#51cf66'", "'#ffd93d'"]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: 'Parallelization Benefits by Stage' }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 3 }
+                }
+            }
+        });
+
+        // Bottleneck Chart
+        const bottleneckCtx = document.getElementById('bottleneckChart').getContext('2d');
+        new Chart(bottleneckCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Prepare', 'Fetch', 'Transform', 'Save'],
+                datasets: [{
+                    data: [1, 3, 3, 2],
+                    backgroundColor: ["'#51cf66'", "'#ff6b6b'", "'#ff6b6b'", "'#ffd93d'"]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: 'Bottleneck Risk Distribution' }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

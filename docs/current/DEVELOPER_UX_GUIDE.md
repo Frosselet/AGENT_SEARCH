@@ -5,26 +5,28 @@
 ### **Step 1: Install & Setup**
 ```bash
 # 1. Clone the repository
-git clone https://github.com/company/pipeline-modernizer
-cd pipeline-modernizer
+git clone <repository-url>
+cd agent_search
 
-# 2. One-command setup
-./setup.sh
+# 2. Install dependencies
+pip install -r requirements.txt
+pip install watchdog  # For Prevention Mode
+pip install baml-py   # Optional - has fallback mode
 
 # 3. Verify installation
-modernize --version
+python src/cli.py --help
 ```
 
 ### **Step 2: Your First Pipeline Transformation**
 ```bash
-# Point to your legacy pipeline file
-modernize analyze my_legacy_pipeline.py
+# Multi-agent orchestrated analysis
+python src/cli.py orchestrate examples/legacy_pipeline.py
 
-# Review recommendations
-modernize transform my_legacy_pipeline.py --dry-run
+# Individual agent analysis
+python src/cli.py architecture examples/legacy_pipeline.py
 
-# Apply transformation with approval
-modernize transform my_legacy_pipeline.py --apply
+# Validation testing
+python src/cli.py validate original.py modernized.py
 ```
 
 ### **Step 3: Review the Results**
@@ -54,7 +56,7 @@ modernize guided-transform examples/sample_pipeline.py
 
 **What happens:**
 - ✅ Interactive walkthrough of the process
-- ✅ Explains each agent's role and decisions  
+- ✅ Explains each agent's role and decisions
 - ✅ Shows before/after code comparison
 - ✅ Demonstrates performance improvements
 
@@ -104,7 +106,7 @@ Continue? [Y/n]: Y
 🔄 Package Modernization:
    • requests → httpx (async support)
    • pandas → polars (5x faster)
-   
+
 Apply upgrades? [Y/n]: Y
 
 ⚡ Transforming to Prepare-Fetch-Transform-Save pattern...
@@ -121,12 +123,12 @@ Apply upgrades? [Y/n]: Y
 🔗 Git Workflow:
    Branch: feature/modernize-data-scraper
    PR: https://github.com/company/repo/pull/123
-   
+
    PR will be auto-reviewed and merged if all checks pass.
 
 🎉 Transformation Complete!
    Your pipeline is now production-ready with:
-   • 85% faster execution (240min → 30min)  
+   • 85% faster execution (240min → 30min)
    • 60% cost reduction
    • Auto-scaling and error handling
 ```
@@ -165,7 +167,7 @@ Priority Pipeline Ranking:
 
 Estimated Savings:
 • Performance: 78% average improvement
-• Cost: $2,400/month → $950/month  
+• Cost: $2,400/month → $950/month
 • Development Time: 87% reduction
 
 Proceed with batch modernization? [Y/n]:
@@ -178,7 +180,7 @@ Proceed with batch modernization? [Y/n]:
 ### **Core Commands**
 ```bash
 modernize analyze <file>              # Analyze pipeline structure
-modernize recommend <file>            # Get architecture recommendations  
+modernize recommend <file>            # Get architecture recommendations
 modernize transform <file>            # Apply transformation
 modernize status                      # Check current transformations
 modernize metrics                     # View performance metrics
@@ -213,7 +215,7 @@ modernize templates                   # Manage custom templates
 ### **VS Code Extension**
 
 **Right-click context menu:**
-- 📊 "Analyze Pipeline" 
+- 📊 "Analyze Pipeline"
 - ⚡ "Modernize Pipeline"
 - 🔍 "Show Recommendations"
 
@@ -240,7 +242,7 @@ modernize templates                   # Manage custom templates
 I've detected this pipeline could benefit from modernization:
 
 **Current Issues:**
-- ❌ Sequential processing (4+ hours runtime)  
+- ❌ Sequential processing (4+ hours runtime)
 - ❌ Not following company Prepare-Fetch-Transform-Save pattern
 - ❌ Using deprecated request patterns
 
@@ -258,7 +260,7 @@ I've detected this pipeline could benefit from modernization:
 
 **Quality Gates Passed:**
 - ✅ Pattern compliance: 100%
-- ✅ Security scan: No issues  
+- ✅ Security scan: No issues
 - ✅ Performance: 96% improvement
 - ✅ Test coverage: 92%
 
@@ -293,7 +295,7 @@ modernize approval-flow --require-lead-approval --auto-merge-threshold 90%
 # 1. Complete setup
 ./setup.sh
 
-# 2. Take interactive tutorial  
+# 2. Take interactive tutorial
 modernize tutorial
 
 # 3. Practice on sample pipeline
@@ -334,13 +336,13 @@ modernize transform pipeline.py --auto-pr
 
 📊 Team Metrics:
    Pipelines Modernized: 23/45 (51%)
-   Performance Improvement: 78% average  
+   Performance Improvement: 78% average
    Cost Savings: $3,200/month
    Time Saved: 156 developer hours
 
 🚀 Active Transformations:
    • financial_scraper.py (John) - In Review
-   • data_processor.py (Sarah) - Testing  
+   • data_processor.py (Sarah) - Testing
    • report_gen.py (Mike) - Ready to Deploy
 
 ⚡ Recent Completions:
@@ -366,7 +368,7 @@ modernize transform pipeline.py --auto-pr
 🎯 Recommended Next Steps:
    1. data_scraper.py (High Impact - 4hr → 15min)
    2. email_processor.py (Compliance - Pattern update needed)
-   
+
 🏆 Achievements:
    ✅ First Transformation
    ✅ Performance Hero (90%+ improvement)
@@ -414,10 +416,10 @@ John submitted pipeline for modernization:
 - ✅ Includes rollback capability
 - ✅ Requires approval before deployment
 
-### **Q: How long does transformation take?**  
-**A:** 
+### **Q: How long does transformation take?**
+**A:**
 - **Simple pipelines**: 2-5 minutes
-- **Complex pipelines**: 10-15 minutes  
+- **Complex pipelines**: 10-15 minutes
 - **Legacy monoliths**: 20-30 minutes
 - **Manual effort**: 87% reduction vs doing it yourself
 
@@ -460,7 +462,7 @@ Developer Time Saved: 340 hours
 
 🎯 Business Impact:
 • 90% faster pipeline deployments
-• 60% fewer production issues  
+• 60% fewer production issues
 • 75% reduction in technical debt
 ```
 

@@ -18,10 +18,12 @@ from typing import Optional
 # Add the src directory to the path to import baml_client
 sys.path.insert(0, str(Path(__file__).parent))
 
-from architecture_optimizer_agent import ArchitectureOptimizerCLI
-from enterprise_package_agent import EnterprisePackageCLI
-from master_orchestrator import OrchestratorCLI
-from validation_agent import ValidationCLI
+from agents.architecture_optimizer import ArchitectureOptimizerCLI
+from agents.enterprise_package import EnterprisePackageCLI
+from agents.master_orchestrator import OrchestratorCLI
+from agents.prevention_mode import PreventionModeCLI
+from agents.splitter_analyzer import SplitterAnalyzerCLI
+from agents.validation import ValidationCLI
 
 try:
     from baml_client.baml_client import b
@@ -608,6 +610,63 @@ Examples:
         "--output", help="Output file for architecture analysis"
     )
 
+    # Splitter analysis command
+    splitter_parser = subparsers.add_parser(
+        "splitter", help="Analyze pipeline for optimal parallelization strategy"
+    )
+    splitter_parser.add_argument("file_path", help="Path to pipeline file to analyze")
+    splitter_parser.add_argument(
+        "--business-requirements",
+        default="Optimize pipeline performance",
+        help="Business requirements and performance goals",
+    )
+    splitter_parser.add_argument(
+        "--performance-constraints",
+        default="Minimize latency and maximize throughput",
+        help="Performance constraints and limitations",
+    )
+    splitter_parser.add_argument("--output", help="Output file for splitter analysis")
+    splitter_parser.add_argument(
+        "--visualize",
+        action="store_true",
+        help="Generate HTML visualization of the analysis",
+    )
+
+    # Prevention mode command
+    prevention_parser = subparsers.add_parser(
+        "prevent", help="Real-time code analysis and prevention mode"
+    )
+    prevention_subparsers = prevention_parser.add_subparsers(
+        dest="prevention_action", help="Prevention mode actions"
+    )
+
+    # Start monitoring
+    monitor_parser = prevention_subparsers.add_parser(
+        "monitor", help="Start real-time monitoring session"
+    )
+    monitor_parser.add_argument(
+        "paths", nargs="+", help="Directories or files to monitor"
+    )
+    monitor_parser.add_argument(
+        "--duration", type=int, help="Duration in minutes (default: until Ctrl+C)"
+    )
+    monitor_parser.add_argument(
+        "--min-severity",
+        choices=["info", "warning", "error", "critical"],
+        default="warning",
+        help="Minimum severity level to report",
+    )
+    monitor_parser.add_argument(
+        "--auto-fix", action="store_true", help="Enable automatic fixing of issues"
+    )
+
+    # Single file analysis
+    scan_parser = prevention_subparsers.add_parser(
+        "scan", help="Analyze a single file immediately"
+    )
+    scan_parser.add_argument("file_path", help="Path to file to analyze")
+    scan_parser.add_argument("--output", help="Output file for analysis results")
+
     return parser
 
 
@@ -808,7 +867,7 @@ async def main():
 
             # Load and display PIPELINE.md rules
             try:
-                from master_orchestrator import PipelineRules
+                from agents.master_orchestrator import PipelineRules
 
                 rules = PipelineRules()
                 rules_summary = rules.get_rules_summary()
@@ -1037,6 +1096,223 @@ async def main():
 
             if args.output:
                 print(f"\n📄 Complete analysis saved to: {args.output}")
+
+        elif args.command == "splitter":
+            print(f"✂️ Analyzing splitter optimization for pipeline: {args.file_path}")
+            print(f"   Business requirements: {args.business_requirements}")
+            print(f"   Performance constraints: {args.performance_constraints}")
+            if args.visualize:
+                print("   📊 Generating HTML visualization...")
+
+            splitter_cli = SplitterAnalyzerCLI()
+
+            result = await splitter_cli.analyze_pipeline_splitter(
+                file_path=args.file_path,
+                business_requirements=args.business_requirements,
+                performance_constraints=args.performance_constraints,
+                output_file=args.output,
+                generate_visualization=args.visualize,
+            )
+
+            print("\n" + "=" * 80)
+            print("SPLITTER ANALYSIS RESULTS")
+            print("=" * 80)
+
+            summary = result["analysis_summary"]
+            print(f"⏱️  Analysis duration: {summary['duration_seconds']:.2f}s")
+            print(
+                f"🤖 BAML integration: {'✅ Active' if summary['baml_available'] else '⚠️ Fallback mode'}"
+            )
+
+            rec = result["splitter_recommendation"]
+            print("\n✂️ Splitter Recommendation:")
+            print(f"   Optimal split point: {rec['optimal_split_point']}")
+            print(f"   Performance improvement: {rec['performance_improvement']}")
+            print(f"   Scalability factor: {rec['scalability_factor']}")
+            print(f"   Cost reduction: {rec['cost_reduction']}")
+            print(f"   Monthly savings: {rec['monthly_savings']}")
+
+            print("\n💡 Split Rationale:")
+            print(f"   {rec['split_rationale']}")
+
+            print("\n📊 Stage Analysis Summary:")
+            stages = result["stage_analysis"]
+            for stage in stages:
+                complexity_emoji = {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(
+                    stage["complexity"], "⚪"
+                )
+                bottleneck_emoji = {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(
+                    stage["bottleneck_potential"], "⚪"
+                )
+                split_indicator = (
+                    " 👈 RECOMMENDED SPLIT"
+                    if stage["stage_name"] == rec["optimal_split_point"]
+                    else ""
+                )
+
+                print(
+                    f"   {stage['stage_name'].title()}: {complexity_emoji} complexity, "
+                    f"{bottleneck_emoji} bottleneck risk, "
+                    f"⚡ {stage['parallelization_benefit']} parallelization benefit{split_indicator}"
+                )
+
+            # Show implementation guidance
+            impl_guide = result.get("implementation_guide", {})
+            if impl_guide.get("implementation_steps"):
+                print("\n🛠️ Implementation Steps:")
+                for i, step in enumerate(impl_guide["implementation_steps"][:3], 1):
+                    print(f"   {i}. {step}")
+                if len(impl_guide["implementation_steps"]) > 3:
+                    print(
+                        f"   ... and {len(impl_guide['implementation_steps']) - 3} more steps"
+                    )
+
+            # Show visualization info
+            viz_metrics = result["visualization_data"]["summary_metrics"]
+            print("\n📈 Summary Metrics:")
+            print(f"   Total stages analyzed: {viz_metrics['total_stages']}")
+            print(
+                f"   Expected performance gain: {viz_metrics['expected_improvement']:.1f}%"
+            )
+            print(f"   Estimated monthly savings: ${viz_metrics['cost_savings']:.0f}")
+
+            if args.output:
+                print(f"\n📄 Complete analysis saved to: {args.output}")
+
+            if args.visualize:
+                print(
+                    "📊 Interactive HTML visualization generated in output/splitter_visualizations/"
+                )
+
+        elif args.command == "prevent":
+            if args.prevention_action == "monitor":
+                print("🛡️  Starting Prevention Mode monitoring...")
+                print(f"   Monitoring paths: {', '.join(args.paths)}")
+                print(f"   Minimum severity: {args.min_severity}")
+                print(f"   Auto-fix enabled: {args.auto_fix}")
+                if args.duration:
+                    print(f"   Duration: {args.duration} minutes")
+
+                prevention_cli = PreventionModeCLI()
+
+                # Configure the agent
+                prevention_cli.agent.config["min_severity"] = args.min_severity
+                prevention_cli.agent.config["auto_fix_enabled"] = args.auto_fix
+
+                result = await prevention_cli.start_monitoring_session(
+                    watch_paths=args.paths, duration_minutes=args.duration
+                )
+
+                print("\n" + "=" * 80)
+                print("PREVENTION MODE SESSION SUMMARY")
+                print("=" * 80)
+
+                stats = result.get("statistics", {})
+                print(f"📊 Total analyses: {stats.get('total_analyses', 0)}")
+                print(f"🚨 Total issues: {stats.get('total_issues', 0)}")
+                print(f"⚡ Analyses in last hour: {stats.get('analyses_last_hour', 0)}")
+                if stats.get("avg_issues_per_analysis", 0) > 0:
+                    print(
+                        f"📈 Average issues per analysis: {stats['avg_issues_per_analysis']:.1f}"
+                    )
+
+                if result.get("trends"):
+                    trends = result["trends"]
+                    trend_emoji = {
+                        "increasing": "📈",
+                        "decreasing": "📉",
+                        "stable": "➡️",
+                    }.get(trends.get("issue_trend", "stable"), "➡️")
+                    print(
+                        f"📊 Issue trend: {trend_emoji} {trends.get('issue_trend', 'stable')}"
+                    )
+
+                if result.get("top_issues"):
+                    print("\n🔝 Most Common Issues:")
+                    for i, issue_item in enumerate(result["top_issues"][:5], 1):
+                        print(
+                            f"   {i}. {issue_item['issue']} ({issue_item['frequency']} times)"
+                        )
+
+                if result.get("recommendations"):
+                    print("\n💡 Recommendations:")
+                    for i, rec in enumerate(result["recommendations"][:3], 1):
+                        print(f"   {i}. {rec}")
+
+            elif args.prevention_action == "scan":
+                print(f"🔍 Scanning file: {args.file_path}")
+
+                prevention_cli = PreventionModeCLI()
+                results = await prevention_cli.analyze_file_once(args.file_path)
+
+                if args.output and results:
+                    # Save detailed results
+                    detailed_results = {
+                        "file_path": args.file_path,
+                        "timestamp": datetime.now().isoformat(),
+                        "issues": [
+                            {
+                                "severity": r.severity,
+                                "issue_type": r.issue_type,
+                                "message": r.message,
+                                "line_number": r.line_number,
+                                "column_number": r.column_number,
+                                "suggestion": r.suggestion,
+                                "confidence": r.confidence,
+                                "auto_fixable": r.auto_fixable,
+                            }
+                            for r in results
+                        ],
+                        "summary": {
+                            "total_issues": len(results),
+                            "critical_issues": len(
+                                [r for r in results if r.severity == "critical"]
+                            ),
+                            "error_issues": len(
+                                [r for r in results if r.severity == "error"]
+                            ),
+                            "warning_issues": len(
+                                [r for r in results if r.severity == "warning"]
+                            ),
+                            "info_issues": len(
+                                [r for r in results if r.severity == "info"]
+                            ),
+                        },
+                    }
+
+                    with open(args.output, "w", encoding="utf-8") as f:
+                        json.dump(detailed_results, f, indent=2, default=str)
+                    print(f"📄 Detailed results saved to: {args.output}")
+
+                print("\n📋 Analysis Summary:")
+                if results:
+                    severity_counts = {}
+                    for result in results:
+                        severity_counts[result.severity] = (
+                            severity_counts.get(result.severity, 0) + 1
+                        )
+
+                    for severity in ["critical", "error", "warning", "info"]:
+                        count = severity_counts.get(severity, 0)
+                        if count > 0:
+                            severity_emoji = {
+                                "critical": "🚨",
+                                "error": "❌",
+                                "warning": "⚠️",
+                                "info": "ℹ️",
+                            }
+                            print(
+                                f"   {severity_emoji[severity]} {severity.title()}: {count} issues"
+                            )
+
+                    auto_fixable = len([r for r in results if r.auto_fixable])
+                    if auto_fixable > 0:
+                        print(f"   🔧 Auto-fixable: {auto_fixable} issues")
+                else:
+                    print("   ✅ No issues found")
+
+            else:
+                print("❌ Unknown prevention action. Use 'monitor' or 'scan'")
 
     except KeyboardInterrupt:
         print("\n⚠️  Operation cancelled by user")

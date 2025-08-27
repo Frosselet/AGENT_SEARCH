@@ -77,7 +77,7 @@ Add to your VS Code `settings.json`:
 ### Quick Demo
 
 1. **Right-click** any Python pipeline file
-2. Select **"📊 Analyze Pipeline"**  
+2. Select **"📊 Analyze Pipeline"**
 3. View the analysis results
 4. Click **"⚡ Transform Now"** to modernize
 5. Open the **🤖 AI Chat** to ask questions
@@ -167,7 +167,7 @@ Explorer → Pipeline Modernizer → Overview → "Analyze All Files"
 #### Code Lens Suggestions (Inline)
 When editing Python files, you'll see actionable suggestions above functions:
 - **"⚡ Upgrade to httpx"** → Replace requests
-- **"🚀 Consider polars"** → Replace pandas  
+- **"🚀 Consider polars"** → Replace pandas
 - **"🔥 Parallelize requests"** → Fix performance bottlenecks
 - **"🏗️ Transform to PFTS pattern"** → Modernize architecture
 
@@ -210,7 +210,7 @@ When editing Python files, you'll see actionable suggestions above functions:
 
 #### Metrics Overview
 - **Total Python Files**: Workspace file count
-- **Files Analyzed**: Coverage percentage  
+- **Files Analyzed**: Coverage percentage
 - **Average Complexity**: Scale 1-10 (target: <6)
 - **Potential Speedup**: Expected performance gains
 
@@ -418,7 +418,7 @@ repos:
 5. **Learn and improve** → Developer understands WHY patterns matter
 6. **Quality commit** → Pre-commit hook ensures standards
 
-**Expected Result**: 
+**Expected Result**:
 - New developer writes modern code from day 1
 - 90% reduction in code review feedback
 - Team standards automatically enforced
@@ -433,7 +433,7 @@ def fetch_data():
         url = f"https://api.com/data/{i}"
         response = requests.get(url)  # ← RED SQUIGGLY APPEARS IMMEDIATELY
         results.append(response.json())
-    
+
 # Extension shows tooltip:
 # "🚫 Sequential requests in loop - This will be 10-20x slower!"
 # "💡 Use async/await: async with httpx.AsyncClient()..."
@@ -442,8 +442,8 @@ def fetch_data():
 
 # Developer clicks "Ask AI":
 # AI Chat opens with context:
-# "I see you're making sequential HTTP requests in a loop. 
-#  This is a common performance bottleneck. Let me show you 
+# "I see you're making sequential HTTP requests in a loop.
+#  This is a common performance bottleneck. Let me show you
 #  the async pattern that will make this 90% faster..."
 ```
 
@@ -546,7 +546,7 @@ uv run python -c "import src.baml_client"
   },
   "after": {
     "averageComplexity": 4.8,
-    "lambdaCosts": "$720/month", 
+    "lambdaCosts": "$720/month",
     "pipelineRuntime": "2 minutes"
   }
 }

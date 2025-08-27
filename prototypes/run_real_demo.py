@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 """
+🧪 PROTOTYPE WARNING: This is experimental code for concept validation
+❌ NOT suitable for production use
+❌ Missing error handling, security, and edge case coverage
+✅ Demonstrates intended functionality and interface design
+
 Real Multi-Agent Workflow Demo
 Demonstrates the actual system running with real structure, just without API calls
 """

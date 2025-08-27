@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 """
+🎭 SIMULATION WARNING: This code mocks behavior for testing
+❌ Does not implement real functionality
+❌ Returns hardcoded responses for demonstration
+✅ Shows expected inputs, outputs, and user experience
+
 Complete Multi-Agent Workflow Execution
 Shows the entire process from analysis to modernized code generation
 """
