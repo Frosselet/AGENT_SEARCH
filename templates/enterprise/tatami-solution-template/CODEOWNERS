@@ -1,0 +1,6 @@
+# Use this file to define the default code owners for the generated repository.
+# AS DAF solutions are the most common case, we use that as the default configuration.
+# For either non-solution components, or for solutions belonging to different teams,
+# please adjust the below rules accordingly.
+
+* @tat-ops/daf-reviewers

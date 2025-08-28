@@ -1,0 +1,2 @@
+# Add your requirements here
+# /!\ This file should always exists - even if empty - or the Docker pipeline will break (at COPY step) /!\

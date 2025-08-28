@@ -1,0 +1,79 @@
+{
+  "name": "prefect-template",
+  "version": "2.0.0",
+  "template_type": "data_processing",
+  "description": "Enterprise Prefect workflow template with cloud deployment and monitoring",
+  "directory_structure": {
+    "runtime": [
+      "flows/main_flow.py",
+      "tasks/data_tasks.py",
+      "deployments/deployment.yaml"
+    ],
+    "infrastructure": [
+      "infrastructure/main.tf",
+      "infrastructure/prefect.tf",
+      "docker/Dockerfile"
+    ],
+    "tests": [
+      "tests/test_flows.py",
+      "tests/integration/test_deployment.py"
+    ],
+    "documentation": [
+      "README.md",
+      "docs/flow-development.md"
+    ],
+    "configuration": [
+      "prefect.yaml",
+      "requirements.txt",
+      ".env.template"
+    ]
+  },
+  "required_files": [
+    "flows/main_flow.py",
+    "requirements.txt",
+    "prefect.yaml",
+    "deployments/deployment.yaml"
+  ],
+  "package_dependencies": [
+    "prefect",
+    "prefect-aws",
+    "pydantic",
+    "data_contract_bindings"
+  ],
+  "infrastructure_patterns": [
+    "prefect-cloud",
+    "docker",
+    "aws-ecs",
+    "terraform"
+  ],
+  "testing_patterns": [
+    "pytest",
+    "prefect-testing",
+    "flow-validation"
+  ],
+  "ci_cd_integration": {
+    "prefect_deploy": true,
+    "terraform": true,
+    "vela": true
+  },
+  "compliance_rules": {
+    "required_patterns": [
+      "prefect.flow",
+      "prefect.task",
+      "tatami_context",
+      "structured_logging"
+    ],
+    "forbidden_patterns": [
+      "print_statements",
+      "hardcoded_secrets"
+    ],
+    "naming_conventions": {
+      "flows": "kebab-case",
+      "tasks": "snake_case"
+    }
+  },
+  "migration_compatibility": [
+    "tatami-solution-template",
+    "airflow-template"
+  ]
+}

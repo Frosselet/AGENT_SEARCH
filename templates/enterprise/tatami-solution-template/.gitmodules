@@ -1,0 +1,9 @@
+[submodule "tests/terraform/config"]
+    path = tests/terraform/config
+    url = https://git.cglcloud.com/tat-ops/ghs-sandbox-vars
+[submodule ".scaffolding"]
+    path = .scaffolding
+    url = https://git.cglcloud.com/tat-ops/tatami-scaffolding
+[submodule ".snippets"]
+    path = .snippets
+    url = https://git.cglcloud.com/tat-ops/tatami-snippets

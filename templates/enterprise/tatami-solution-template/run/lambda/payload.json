@@ -1,0 +1,15 @@
+{
+    "DetailType": "tatami.event",
+    "Source": "tatami.sources.activator.generic.lambda",
+    "Detail": {
+      "Metadata": {
+        "DataContract": {
+          "Address": ""
+        },
+        "Owner": "tatami.owners.teams.tat",
+        "Domain": "tatami.domains.tda.generic",
+        "Service": ""
+      },
+      "Body": {}
+    }
+  }

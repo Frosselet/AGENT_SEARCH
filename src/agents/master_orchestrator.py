@@ -4,14 +4,25 @@ Master Orchestrator Agent
 
 This agent coordinates multiple specialized agents to provide comprehensive
 pipeline modernization with intelligent decision making and conflict resolution.
+
+TEMPLATE-AGNOSTIC ARCHITECTURE:
+- Works with ANY registered enterprise template dynamically
+- Coordinates agents for template-specific modernization strategies
+- Supports template migration and evolution workflows
+- Enables the platform to adapt to new templates without code changes
 """
 
 import asyncio
 import json
 import logging
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
+
+# Add the src directory to the path to import core modules
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 
 try:
     from baml_client.baml_client import b
@@ -306,11 +317,6 @@ class MasterOrchestrator:
         that can be executed step by step with progress tracking.
         """
         logger.info("📋 Creating execution plan for pipeline modernization...")
-
-        # Analyze pipeline complexity to determine plan scope
-        lines_count = len(pipeline_code.split("\n"))
-        has_async = "async" in pipeline_code
-        has_error_handling = "try:" in pipeline_code
 
         # Create tasks based on analysis
         tasks = [

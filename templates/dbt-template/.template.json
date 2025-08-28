@@ -1,0 +1,77 @@
+{
+  "name": "dbt-template",
+  "version": "1.7.0",
+  "template_type": "ml_analytics",
+  "description": "Enterprise dbt template for data transformation and analytics workflows",
+  "directory_structure": {
+    "runtime": [
+      "models/staging/",
+      "models/marts/",
+      "macros/custom_macros.sql",
+      "seeds/reference_data.csv"
+    ],
+    "infrastructure": [
+      "terraform/snowflake.tf",
+      "terraform/dbt_cloud.tf",
+      "profiles/profiles.yml"
+    ],
+    "tests": [
+      "tests/generic/",
+      "tests/singular/test_data_quality.sql"
+    ],
+    "documentation": [
+      "README.md",
+      "docs/model_documentation.md"
+    ],
+    "configuration": [
+      "dbt_project.yml",
+      "packages.yml",
+      "selectors.yml"
+    ]
+  },
+  "required_files": [
+    "dbt_project.yml",
+    "profiles/profiles.yml",
+    "models/"
+  ],
+  "package_dependencies": [
+    "dbt-core",
+    "dbt-snowflake",
+    "dbt-utils",
+    "dbt-expectations"
+  ],
+  "infrastructure_patterns": [
+    "dbt-cloud",
+    "snowflake",
+    "terraform"
+  ],
+  "testing_patterns": [
+    "dbt-testing",
+    "data-quality-tests",
+    "schema-tests"
+  ],
+  "ci_cd_integration": {
+    "dbt_cloud": true,
+    "terraform": true,
+    "data_validation": true
+  },
+  "compliance_rules": {
+    "required_patterns": [
+      "dbt_project.yml",
+      "model_documentation",
+      "data_tests"
+    ],
+    "forbidden_patterns": [
+      "select_star",
+      "hardcoded_dates"
+    ],
+    "naming_conventions": {
+      "models": "snake_case",
+      "sources": "snake_case"
+    }
+  },
+  "migration_compatibility": [
+    "jupyter-template",
+    "tatami-solution-template"
+  ]
+}

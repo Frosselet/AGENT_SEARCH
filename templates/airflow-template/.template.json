@@ -1,0 +1,77 @@
+{
+  "name": "airflow-template",
+  "version": "2.8.0",
+  "template_type": "data_processing",
+  "description": "Enterprise Apache Airflow DAG template with Kubernetes deployment",
+  "directory_structure": {
+    "runtime": [
+      "dags/main_dag.py",
+      "plugins/custom_operators.py",
+      "config/airflow.cfg"
+    ],
+    "infrastructure": [
+      "kubernetes/airflow-deployment.yaml",
+      "terraform/airflow.tf",
+      "helm/values.yaml"
+    ],
+    "tests": [
+      "tests/test_dags.py",
+      "tests/test_operators.py"
+    ],
+    "documentation": [
+      "README.md",
+      "docs/dag-development.md"
+    ],
+    "configuration": [
+      "requirements.txt",
+      "docker/Dockerfile",
+      "env_vars.yaml"
+    ]
+  },
+  "required_files": [
+    "dags/main_dag.py",
+    "requirements.txt",
+    "kubernetes/airflow-deployment.yaml"
+  ],
+  "package_dependencies": [
+    "apache-airflow",
+    "apache-airflow-providers-aws",
+    "apache-airflow-providers-kubernetes",
+    "data_contract_bindings"
+  ],
+  "infrastructure_patterns": [
+    "kubernetes",
+    "helm",
+    "docker",
+    "terraform"
+  ],
+  "testing_patterns": [
+    "pytest",
+    "airflow-testing",
+    "dag-validation"
+  ],
+  "ci_cd_integration": {
+    "kubernetes_deploy": true,
+    "helm": true,
+    "terraform": true
+  },
+  "compliance_rules": {
+    "required_patterns": [
+      "airflow.DAG",
+      "tatami_context",
+      "task_dependencies"
+    ],
+    "forbidden_patterns": [
+      "print_statements",
+      "hardcoded_connections"
+    ],
+    "naming_conventions": {
+      "dags": "snake_case",
+      "tasks": "snake_case"
+    }
+  },
+  "migration_compatibility": [
+    "prefect-template",
+    "tatami-solution-template"
+  ]
+}

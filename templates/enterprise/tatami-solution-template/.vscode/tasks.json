@@ -1,0 +1,189 @@
+{
+    "version": "2.0.0",
+    "windows": {
+        "options": {
+            "shell": {
+                "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+                "args": ["-c"]
+            }
+        }
+    },
+    "tasks": [
+        {
+            "type": "docker-build",
+            "label": "docker-build-app-local-base",
+            "detail": "Build base image to debug current Lambda function",
+            "platform": "python",
+            "hide": true,
+            "dockerBuild": {
+                "dockerfile": "${fileDirname}/debug.dockerfile",
+                "context": "${fileDirname}",
+                "buildArgs": {
+                    "HTTPS_PROXY": "${env:HTTPS_PROXY}"
+                }
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run-local",
+            "detail": "Start container to debug current Lambda function",
+            "dependsOn": [
+                "docker-build-app-local-base"
+            ],
+            "platform": "python",
+            "hide": true,
+            "python": {
+                "module": "debugpy",
+                "args": ["--wait-for-client","--listen","0.0.0.0:6560","-m","awslambdaric"]
+            },
+            "dockerRun": {
+                "containerName": "debug.${workspaceFolderBasename}",
+                "env": {
+                    "AWS_LAMBDA_RUNTIME_API": "localhost:6559",
+                    "AWS_LAMBDA_FUNCTION_TIMEOUT": "1800",
+                    "AWS_DEFAULT_REGION": "us-east-1",
+                    "DEBUG": "true"
+                },
+                "ports": [
+                    { "hostPort": 6559, "containerPort": 8080 },
+                    { "hostPort": 6560, "containerPort": 5678 }
+                ],
+                "volumes": [
+                    {
+                        "localPath": "${userHome}/.aws-lambda-rie",
+                        "containerPath": "/aws-lambda",
+                        "type": "volume"
+                    },
+                    {
+                        "localPath": "${userHome}/.aws",
+                        "containerPath": "/root/.aws",
+                        "type": "volume",
+                        "permissions": "ro"
+                    }
+                ],
+                "customOptions": "--entrypoint /aws-lambda/aws-lambda-rie",
+                "command": "debugpy --listen 0.0.0.0:5678 -m awslambdaric ${fileBasenameNoExtension}.handler"
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run-local-batch",
+            "detail": "Start container to debug current Batch job",
+            "dependsOn": [
+                "docker-build-app-local-base"
+            ],
+            "python": {
+                "file": "_loader.py",
+                "args": [ "${fileBasename}", "payload.json" ]
+            },
+            "dockerRun": {
+                "containerName": "debug.${workspaceFolderBasename}",
+                "env": {
+                    "DEBUG": "true",
+                    "TATAMI_TAGS_FILE": ".tags.json",
+                    "AWS_BATCH_JOB_ID": "debug_batch_job_id"
+                },
+                "volumes": [
+                    {
+                        "localPath": "${userHome}/.aws",
+                        "containerPath": "/root/.aws",
+                        "type": "volume",
+                        "permissions": "ro"
+                    }
+                ]
+            }
+        },
+        {
+            "label": "docker-attach-debugger",
+            "detail": "Trigger HTTP call against Lambda emulator",
+            "type": "shell",
+            "command": "${command:extension.commandvariable.file.fileDirnamePosix}/trigger-debugger.sh",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "dependsOn": [
+                "docker-run-local"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "docker-detach-debugger",
+            "detail": "Stop debug docker image",
+            "type": "shell",
+            "hide": true,
+            "command": "tests/run/stop.sh",
+            "args": [
+                "debug.${workspaceFolderBasename}"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "TATami-trigger",
+            "detail": "Launch local trigger",
+            "type": "shell",
+            "command": "${command:extension.commandvariable.file.fileDirnamePosix}/trigger.sh",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "TATami-snippets",
+            "command": "${command:extension.commandvariable.workspace.folderPosix}/.snippets/add.sh ${command:extension.commandvariable.workspace.folderPosix}",
+            "detail": "Launch the snippets tool",
+            "type": "shell",
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true,
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "TATami-scaffolding",
+            "command": "${command:extension.commandvariable.workspace.folderPosix}/.scaffolding/add.sh",
+            "detail": "Launch the scaffolding tool",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true,
+                "showReuseMessage": true,
+                "clear": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

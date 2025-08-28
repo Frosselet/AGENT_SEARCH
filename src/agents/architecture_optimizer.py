@@ -5,6 +5,11 @@ Architecture Optimizer Agent
 This agent analyzes pipeline code and determines the optimal AWS architecture
 for deployment, including service selection (Lambda vs Batch vs ECS) and
 optimal splitting points for parallel processing.
+
+TEMPLATE INTEGRATION:
+- Maps legacy code to enterprise template patterns (tatami-solution-template)
+- Ensures modernized solutions follow standardized architecture conventions
+- Recommends AWS services that align with template structure and tooling
 """
 
 import asyncio
@@ -106,11 +111,14 @@ class ArchitectureOptimizerAgent:
                     cost_constraints,
                 )
 
-            # Perform additional analysis
+            # Perform additional analysis including template compliance
             service_comparison = self._compare_aws_services(
                 pipeline_code, recommendation
             )
             deployment_guide = self._generate_deployment_guide(recommendation)
+            template_compliance = self._analyze_template_compliance(
+                pipeline_code, recommendation
+            )
 
             analysis_duration = (datetime.now() - analysis_start).total_seconds()
 
@@ -127,6 +135,7 @@ class ArchitectureOptimizerAgent:
                     "optimal_split_point": recommendation.optimal_split_point,
                     "rationale": recommendation.rationale,
                 },
+                "template_compliance": template_compliance,
                 "performance_analysis": {
                     "improvement_estimate": recommendation.performance_improvement,
                     "bottleneck_reduction": recommendation.performance_impact.get(
@@ -466,6 +475,237 @@ resource "aws_batch_job_definition" "pipeline" {
                 "Set up secrets management",
             ],
         }
+
+    def _analyze_template_compliance(
+        self, pipeline_code: str, recommendation: ArchitectureRecommendation
+    ) -> dict[str, Any]:
+        """
+        Analyze how well the modernization aligns with enterprise template patterns.
+
+        Args:
+            pipeline_code: The legacy pipeline code to analyze
+            recommendation: The architecture recommendation
+
+        Returns:
+            Template compliance analysis with mapping recommendations
+        """
+
+        # Analyze legacy code patterns
+        legacy_patterns = self._identify_legacy_patterns(pipeline_code)
+
+        # Map to template structure
+        template_mapping = self._map_to_template_structure(
+            legacy_patterns, recommendation
+        )
+
+        # Assess compliance level
+        compliance_score = self._calculate_template_compliance(template_mapping)
+
+        return {
+            "template_version": "tatami-solution-template-v1.0",
+            "compliance_score": compliance_score,
+            "legacy_patterns_detected": legacy_patterns,
+            "template_mapping": template_mapping,
+            "recommended_template_structure": self._generate_template_structure_recommendations(
+                recommendation
+            ),
+            "integration_requirements": self._assess_template_integration_requirements(
+                recommendation
+            ),
+        }
+
+    def _identify_legacy_patterns(self, code: str) -> list[dict[str, Any]]:
+        """Identify common legacy patterns in the code."""
+
+        patterns = []
+
+        # Check for monolithic structure
+        if len(code.split("\n")) > 100 and "class" not in code[:500]:
+            patterns.append(
+                {
+                    "pattern": "monolithic_script",
+                    "confidence": 0.8,
+                    "description": "Large monolithic script without class structure",
+                }
+            )
+
+        # Check for direct AWS service usage
+        aws_patterns = ["boto3", "aws-", "lambda_", "glue_"]
+        for pattern in aws_patterns:
+            if pattern in code.lower():
+                patterns.append(
+                    {
+                        "pattern": f"direct_aws_{pattern}",
+                        "confidence": 0.7,
+                        "description": f"Direct AWS service usage: {pattern}",
+                    }
+                )
+
+        # Check for hardcoded configurations
+        hardcoded_indicators = ["http://", "https://", "amazonaws.com", "region="]
+        for indicator in hardcoded_indicators:
+            if indicator in code:
+                patterns.append(
+                    {
+                        "pattern": "hardcoded_configuration",
+                        "confidence": 0.6,
+                        "description": f"Hardcoded configuration detected: {indicator}",
+                    }
+                )
+
+        return patterns
+
+    def _map_to_template_structure(
+        self, legacy_patterns: list[dict], recommendation: ArchitectureRecommendation
+    ) -> dict[str, Any]:
+        """Map legacy patterns to template structure."""
+
+        # Determine target template directory structure
+        if recommendation.primary_service == "aws-lambda":
+            target_structure = "run/lambda/"
+        elif recommendation.primary_service == "aws-batch":
+            target_structure = "run/batch/"
+        else:
+            target_structure = "run/custom/"
+
+        return {
+            "target_directory": target_structure,
+            "required_files": [
+                "main.py",
+                "requirements.txt",
+                "dockerfile",
+                "debug.dockerfile",
+                ".tags.json",
+                "payload.json",
+                "TODO.md",
+            ],
+            "terraform_integration": {
+                "main_tf": "Root level Terraform configuration",
+                "variables_tf": "Template-compliant variable definitions",
+                "locals_tf": "TATami context integration",
+            },
+            "testing_framework": {
+                "unit_tests": "tests/run/ directory integration",
+                "integration_tests": "tests/terraform/cases/ configuration",
+                "sandbox_deployment": "GHS Sandbox deployment patterns",
+            },
+            "development_tooling": {
+                "vscode_config": ".vscode/ debugging and task integration",
+                "docker_development": "Local containerized development environment",
+                "ci_cd_pipeline": ".vela.yml CI/CD integration",
+            },
+        }
+
+    def _calculate_template_compliance(self, template_mapping: dict) -> float:
+        """Calculate a compliance score (0.0 to 1.0) for template alignment."""
+
+        # This is a simplified scoring system
+        # In practice, this would be more sophisticated
+
+        base_score = 0.5  # Starting point
+
+        # Check for template-compatible patterns
+        if template_mapping.get("target_directory"):
+            base_score += 0.2
+
+        if template_mapping.get("terraform_integration"):
+            base_score += 0.15
+
+        if template_mapping.get("testing_framework"):
+            base_score += 0.1
+
+        if template_mapping.get("development_tooling"):
+            base_score += 0.05
+
+        return min(1.0, base_score)
+
+    def _generate_template_structure_recommendations(
+        self, recommendation: ArchitectureRecommendation
+    ) -> dict[str, Any]:
+        """Generate specific recommendations for template structure integration."""
+
+        return {
+            "directory_structure": {
+                "description": "Recommended directory structure for template compliance",
+                "structure": {
+                    f"run/{recommendation.primary_service.replace('aws-', '')}/": {
+                        "main.py": "Primary application entry point",
+                        "requirements.txt": "Python dependencies",
+                        "dockerfile": "Production container configuration",
+                        "debug.dockerfile": "Development container configuration",
+                    },
+                    "tests/": {
+                        "run/": "Runtime testing utilities",
+                        "terraform/": "Infrastructure testing framework",
+                    },
+                    "root/": {
+                        "main.tf": "Primary Terraform configuration",
+                        "variables.tf": "Input variable definitions",
+                        "locals.tf": "TATami context and local values",
+                    },
+                },
+            },
+            "integration_patterns": {
+                "tatami_context": "Integrate with TATami context for standardized naming and tagging",
+                "scaffolding_usage": "Use .scaffolding/add.sh to generate template-compliant components",
+                "snippet_integration": "Leverage .snippets/ for common patterns and modules",
+            },
+            "tooling_integration": {
+                "vscode_debugging": "Configure VS Code debugging with Docker integration",
+                "ci_cd_pipeline": "Integrate with Vela CI/CD pipeline for automated builds",
+                "testing_framework": "Use template testing patterns for validation",
+            },
+        }
+
+    def _assess_template_integration_requirements(
+        self, recommendation: ArchitectureRecommendation
+    ) -> dict[str, Any]:
+        """Assess specific requirements for integrating with the enterprise template."""
+
+        requirements = {
+            "infrastructure": [],
+            "development": [],
+            "testing": [],
+            "deployment": [],
+        }
+
+        # Infrastructure requirements
+        requirements["infrastructure"].extend(
+            [
+                "Configure TATami context with proper org/repo/environment values",
+                "Set up Terraform state management with enterprise backend",
+                "Configure AWS service integration following template patterns",
+            ]
+        )
+
+        # Development requirements
+        requirements["development"].extend(
+            [
+                "Set up Docker-based local development environment",
+                "Configure VS Code debugging and task integration",
+                "Implement template-compliant logging and error handling",
+            ]
+        )
+
+        # Testing requirements
+        requirements["testing"].extend(
+            [
+                "Create unit tests following template testing patterns",
+                "Configure sandbox deployment for integration testing",
+                "Set up validation against template compliance standards",
+            ]
+        )
+
+        # Deployment requirements
+        requirements["deployment"].extend(
+            [
+                "Configure Vela CI/CD pipeline for automated builds",
+                "Set up multi-environment deployment (sandbox/prod)",
+                "Implement template-compliant monitoring and alerting",
+            ]
+        )
+
+        return requirements
 
     def _create_fallback_analysis(self, code: str, error: str) -> dict[str, Any]:
         """Create a fallback analysis when main analysis fails."""

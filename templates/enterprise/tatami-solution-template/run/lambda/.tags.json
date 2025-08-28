@@ -1,0 +1,7 @@
+{
+    "Scope": "behaviors",
+    "Team": "tatami.owners.teams.tat",
+    "AppEnvironment": "dev",
+    "tatami.attribute.owner": "tatami.owners.teams.tat",
+    "tatami.attribute.domain": "tatami.domains.tda.generic"
+}

@@ -5,6 +5,11 @@ Prevention Mode Agent
 This agent provides real-time code analysis to proactively identify issues
 before they become problems. It monitors code changes, analyzes patterns,
 and provides immediate feedback for prevention-first development.
+
+TEMPLATE INTEGRATION:
+- Validates code against enterprise template patterns (tatami-solution-template)
+- Detects deviations from template structure and tooling requirements
+- Provides real-time feedback for template compliance violations
 """
 
 import ast
@@ -55,9 +60,13 @@ class RealtimeAnalyzer:
         self.last_analysis = {}
 
     async def analyze_code_change(
-        self, file_path: str, code_content: str, change_type: str = "modified"
+        self,
+        file_path: str,
+        code_content: str,
+        change_type: str = "modified",
+        target_template: str = "tatami-solution-template",
     ) -> list[CodeAnalysisResult]:
-        """Analyze code changes in real-time."""
+        """Analyze code changes in real-time with template compliance validation."""
         logger.info(f"🔍 Analyzing {change_type} file: {file_path}")
 
         analysis_results = []
@@ -81,16 +90,23 @@ class RealtimeAnalyzer:
             code_smells = self._detect_code_smells(code_content, file_path)
             analysis_results.extend(code_smells)
 
+            # Template compliance validation
+            template_issues = self._detect_template_violations(
+                code_content, file_path, target_template
+            )
+            analysis_results.extend(template_issues)
+
             # BAML-powered advanced analysis if available
             if BAML_AVAILABLE and len(code_content) > 100:
                 advanced_issues = await self._baml_advanced_analysis(
-                    code_content, file_path
+                    code_content, file_path, target_template
                 )
                 analysis_results.extend(advanced_issues)
 
             # Cache results
             self.analysis_cache[file_path] = {
                 "timestamp": datetime.now().isoformat(),
+                "template": target_template,
                 "results": [
                     {
                         "severity": r.severity,
@@ -280,9 +296,12 @@ class RealtimeAnalyzer:
         return issues
 
     async def _baml_advanced_analysis(
-        self, code: str, file_path: str
+        self,
+        code: str,
+        file_path: str,
+        target_template: str = "tatami-solution-template",
     ) -> list[CodeAnalysisResult]:
-        """Use BAML for advanced code analysis."""
+        """Use BAML for advanced code analysis with template compliance."""
         try:
             # Prepare context for BAML analysis
             analysis_context = {
@@ -291,12 +310,14 @@ class RealtimeAnalyzer:
                 "has_functions": "def " in code,
                 "has_classes": "class " in code,
                 "has_async": "async " in code,
+                "target_template": target_template,
+                "template_compliance_required": True,
             }
 
             result = await b.AnalyzeCodeQuality(
                 code_snippet=code[:2000],  # Limit for API efficiency
                 analysis_context=json.dumps(analysis_context),
-                focus_areas="security,performance,maintainability",
+                focus_areas=f"security,performance,maintainability,template_compliance:{target_template}",
             )
 
             issues = []
@@ -320,6 +341,171 @@ class RealtimeAnalyzer:
         except Exception as e:
             logger.warning(f"BAML analysis failed: {e}")
             return []
+
+    def _detect_template_violations(
+        self,
+        code: str,
+        file_path: str,
+        target_template: str = "tatami-solution-template",
+    ) -> list[CodeAnalysisResult]:
+        """Detect violations of enterprise template patterns."""
+        issues = []
+        lines = code.split("\n")
+
+        # Check for template-specific patterns
+        template_patterns = [
+            # Enterprise package compliance
+            (
+                r"^from data_contract_bindings import",
+                False,
+                "Missing data contract bindings import",
+                "Add: from data_contract_bindings import BaseSchema",
+            ),
+            (
+                r"from tatami_behaviors import",
+                False,
+                "Missing tatami behaviors import",
+                "Add: from tatami_behaviors import StructuredLogger",
+            ),
+            (
+                r"StructuredLogger",
+                False,
+                "Missing structured logger usage",
+                "Replace print statements with StructuredLogger",
+            ),
+            # Template structure compliance
+            (
+                r"# Template:",
+                False,
+                f"Missing {target_template} reference",
+                f"Add template reference: # Template: {target_template}",
+            ),
+            (
+                r"TATami|tatami",
+                False,
+                "Missing TATami context integration",
+                "Integrate TATami context for naming and tagging",
+            ),
+            # Anti-patterns that violate template standards
+            (
+                r"print\(",
+                True,
+                "Using print() instead of structured logging",
+                "Use StructuredLogger instead of print()",
+            ),
+            (
+                r"import os.*getenv",
+                True,
+                "Direct environment variable access",
+                "Use template configuration management patterns",
+            ),
+            (
+                r"hardcoded.*localhost|127\.0\.0\.1",
+                True,
+                "Hardcoded local addresses",
+                "Use template configuration for environment-specific addresses",
+            ),
+        ]
+
+        for i, line in enumerate(lines, 1):
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+
+            for pattern, is_violation, message, suggestion in template_patterns:
+                import re
+
+                if is_violation:
+                    # This is an anti-pattern - flag if found
+                    if re.search(pattern, line, re.IGNORECASE):
+                        issues.append(
+                            CodeAnalysisResult(
+                                {
+                                    "file_path": file_path,
+                                    "severity": "warning",
+                                    "issue_type": "template_violation",
+                                    "message": f"Template compliance: {message}",
+                                    "line_number": i,
+                                    "suggestion": suggestion,
+                                    "confidence": 0.7,
+                                }
+                            )
+                        )
+                else:
+                    # This is a required pattern - track if missing
+                    # We'll check at the end if any required patterns are missing
+                    pass
+
+        # Check for missing required imports at file level
+        code_lower = code.lower()
+        required_checks = [
+            ("data_contract_bindings", "Add enterprise data contract bindings"),
+            ("tatami_behaviors", "Add enterprise logging and behaviors"),
+            ("structuredlogger", "Use enterprise structured logging"),
+        ]
+
+        for required_pattern, suggestion in required_checks:
+            if required_pattern not in code_lower:
+                issues.append(
+                    CodeAnalysisResult(
+                        {
+                            "file_path": file_path,
+                            "severity": "info",
+                            "issue_type": "template_compliance",
+                            "message": f"Template compliance: Missing {required_pattern}",
+                            "line_number": 1,
+                            "suggestion": suggestion,
+                            "confidence": 0.6,
+                        }
+                    )
+                )
+
+        # Check directory structure compliance
+        if self._should_check_directory_structure(file_path):
+            directory_issues = self._validate_directory_structure(
+                file_path, target_template
+            )
+            issues.extend(directory_issues)
+
+        return issues
+
+    def _should_check_directory_structure(self, file_path: str) -> bool:
+        """Check if we should validate directory structure for this file."""
+        # Only check Python files that seem to be main application files
+        return file_path.endswith(".py") and (
+            "main.py" in file_path or "lambda" in file_path or "handler" in file_path
+        )
+
+    def _validate_directory_structure(
+        self, file_path: str, target_template: str
+    ) -> list[CodeAnalysisResult]:
+        """Validate file placement against template directory structure."""
+        issues = []
+
+        # Expected template directories
+        expected_dirs = ["run/lambda/", "run/batch/", "tests/", "terraform/"]
+
+        # Check if file is in expected location
+        file_in_expected_location = any(
+            expected_dir in file_path for expected_dir in expected_dirs
+        )
+
+        if not file_in_expected_location:
+            issues.append(
+                CodeAnalysisResult(
+                    {
+                        "file_path": file_path,
+                        "severity": "info",
+                        "issue_type": "template_structure",
+                        "message": f"File not in {target_template} expected directory structure",
+                        "line_number": 1,
+                        "suggestion": f"Consider moving to run/lambda/ or run/batch/ following {target_template} patterns",
+                        "confidence": 0.5,
+                    }
+                )
+            )
+
+        return issues
 
     def _get_security_suggestion(self, pattern: str) -> str:
         """Get security improvement suggestions."""
@@ -649,7 +835,7 @@ class PreventionModeAgent:
         stats = self.get_analysis_stats()
 
         # Analyze trends
-        recent_history = [h for h in self.analysis_history[-50:]]  # Last 50 analyses
+        recent_history = list(self.analysis_history[-50:])  # Last 50 analyses
 
         issue_trend = "stable"
         if len(recent_history) >= 10:

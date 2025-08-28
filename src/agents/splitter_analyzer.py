@@ -5,6 +5,11 @@ Splitter Analyzer Agent
 This agent analyzes pipelines for optimal parallelization strategies using the
 Prepare-Fetch-Transform-Save pattern. It provides detailed stage analysis and
 visualization of performance bottlenecks to determine the best split points.
+
+TEMPLATE INTEGRATION:
+- Ensures splitting strategies align with template architecture (tatami-solution-template)
+- Maps parallelization patterns to template-compatible service deployments
+- Validates split points against template infrastructure constraints
 """
 
 import asyncio
@@ -75,19 +80,23 @@ class SplitterAnalyzerAgent:
         pipeline_code: str,
         business_requirements: str = "Optimize pipeline performance",
         performance_constraints: str = "Minimize latency and maximize throughput",
+        target_template: str = "tatami-solution-template",
     ) -> dict[str, Any]:
         """
-        Analyze pipeline for optimal parallelization strategy.
+        Analyze pipeline for optimal parallelization strategy with template compliance.
 
         Args:
             pipeline_code: The pipeline code to analyze
             business_requirements: Business context and requirements
             performance_constraints: Performance goals and constraints
+            target_template: Target enterprise template for compliance
 
         Returns:
-            Detailed splitter analysis with visualization data
+            Detailed splitter analysis with visualization data and template integration
         """
-        logger.info("✂️ Starting splitter optimization analysis...")
+        logger.info(
+            f"✂️ Starting splitter optimization analysis targeting {target_template}..."
+        )
 
         analysis_start = datetime.now()
 
@@ -107,14 +116,24 @@ class SplitterAnalyzerAgent:
                 # Fallback analysis when BAML is not available
                 logger.warning("BAML not available, using fallback analysis")
                 recommendation = self._analyze_splitter_fallback(
-                    pipeline_code, business_requirements, performance_constraints
+                    pipeline_code,
+                    business_requirements,
+                    performance_constraints,
+                    target_template,
                 )
+
+            # Analyze template compliance for splitting strategy
+            template_compliance = self._analyze_template_split_compliance(
+                recommendation, target_template
+            )
 
             # Generate visualization data
             visualization_data = self._generate_visualization_data(recommendation)
 
-            # Generate implementation guide
-            implementation_guide = self._generate_implementation_guide(recommendation)
+            # Generate template-aware implementation guide
+            implementation_guide = self._generate_implementation_guide(
+                recommendation, target_template
+            )
 
             analysis_duration = (datetime.now() - analysis_start).total_seconds()
 
@@ -123,6 +142,7 @@ class SplitterAnalyzerAgent:
                     "timestamp": analysis_start.isoformat(),
                     "duration_seconds": analysis_duration,
                     "baml_available": BAML_AVAILABLE,
+                    "target_template": target_template,
                 },
                 "splitter_recommendation": {
                     "optimal_split_point": recommendation.optimal_split_point,
@@ -132,6 +152,7 @@ class SplitterAnalyzerAgent:
                     "cost_reduction": f"{recommendation.cost_reduction:.1f}%",
                     "monthly_savings": f"${recommendation.monthly_savings:.0f}",
                 },
+                "template_compliance": template_compliance,
                 "stage_analysis": [
                     {
                         "stage_name": stage.stage_name,
@@ -151,7 +172,9 @@ class SplitterAnalyzerAgent:
 
         except Exception as e:
             logger.error(f"Splitter analysis failed: {e}")
-            return self._create_fallback_analysis(pipeline_code, str(e))
+            return self._create_fallback_analysis(
+                pipeline_code, str(e), target_template
+            )
 
     def _process_baml_splitter_result(self, result) -> SplitterRecommendation:
         """Process BAML splitter analysis result into our format."""
@@ -182,7 +205,11 @@ class SplitterAnalyzerAgent:
         return SplitterRecommendation(result_data)
 
     def _analyze_splitter_fallback(
-        self, code: str, business_req: str, perf_constraints: str
+        self,
+        code: str,
+        business_req: str,
+        perf_constraints: str,
+        target_template: str = "tatami-solution-template",
     ) -> SplitterRecommendation:
         """Fallback splitter analysis when BAML is not available."""
 
@@ -192,21 +219,19 @@ class SplitterAnalyzerAgent:
         has_file_ops = "open(" in code or ".read" in code or ".write" in code
         has_db_ops = "connect" in code or "cursor" in code
 
-        # Determine optimal split point based on bottlenecks
+        # Determine optimal split point based on bottlenecks and template compatibility
         if has_http_calls and not has_loops:
             optimal_split = "fetch"
-            split_rationale = "Network I/O operations are the primary bottleneck"
+            split_rationale = f"Network I/O operations are the primary bottleneck, aligning with {target_template} async patterns"
         elif has_loops and not has_http_calls:
             optimal_split = "transform"
-            split_rationale = "CPU-intensive data processing is the main bottleneck"
+            split_rationale = f"CPU-intensive data processing is the main bottleneck, suitable for {target_template} compute services"
         elif has_file_ops or has_db_ops:
             optimal_split = "save"
-            split_rationale = (
-                "I/O operations in save stage benefit from parallelization"
-            )
+            split_rationale = f"I/O operations in save stage benefit from parallelization within {target_template} infrastructure"
         else:
             optimal_split = "transform"
-            split_rationale = "Default split at transform stage for balanced processing"
+            split_rationale = f"Default split at transform stage for balanced processing following {target_template} patterns"
 
         fallback_data = {
             "optimal_split_point": optimal_split,
@@ -329,9 +354,11 @@ class SplitterAnalyzerAgent:
         }
 
     def _generate_implementation_guide(
-        self, recommendation: SplitterRecommendation
+        self,
+        recommendation: SplitterRecommendation,
+        target_template: str = "tatami-solution-template",
     ) -> dict[str, Any]:
-        """Generate implementation guide for the splitter recommendation."""
+        """Generate implementation guide for the splitter recommendation with template integration."""
 
         split_point = recommendation.optimal_split_point
 
@@ -431,8 +458,16 @@ async def save_parallel(processed_data):
         return {
             "recommended_approach": f"Split at {split_point} stage",
             "rationale": recommendation.split_rationale,
+            "template_integration": f"Implementing within {target_template} architecture",
             "implementation_steps": implementation_steps,
             "code_examples": code_examples,
+            "template_considerations": [
+                f"Follow {target_template} directory structure (run/lambda/, run/batch/)",
+                f"Integrate with {target_template} TATami context for naming and tagging",
+                f"Use {target_template} Docker development environment",
+                f"Leverage {target_template} Terraform infrastructure patterns",
+                f"Follow {target_template} testing and CI/CD integration",
+            ],
             "performance_considerations": [
                 "Monitor resource utilization during parallel execution",
                 "Implement graceful degradation for high load",
@@ -444,8 +479,104 @@ async def save_parallel(processed_data):
                 "Measure latency improvement vs resource cost",
                 "Test error handling and recovery scenarios",
                 "Validate data consistency in parallel execution",
+                f"Validate template compliance with {target_template} patterns",
             ],
         }
+
+    def _analyze_template_split_compliance(
+        self, recommendation: SplitterRecommendation, target_template: str
+    ) -> dict[str, Any]:
+        """Analyze how well the splitter recommendation aligns with template architecture."""
+
+        compliance = {
+            "template_compliant": True,
+            "compliance_score": 1.0,
+            "template_violations": [],
+            "template_benefits": [],
+            "infrastructure_requirements": [],
+        }
+
+        split_point = recommendation.optimal_split_point
+
+        # Map split points to template-compatible services
+        service_mapping = {
+            "prepare": {
+                "recommended_service": "AWS Lambda",
+                "template_location": "run/lambda/",
+                "infrastructure": ["lambda function", "s3 triggers"],
+                "compliance_score": 0.9,
+            },
+            "fetch": {
+                "recommended_service": "AWS Lambda with async patterns",
+                "template_location": "run/lambda/",
+                "infrastructure": ["lambda function", "api gateway", "event bridge"],
+                "compliance_score": 0.95,
+            },
+            "transform": {
+                "recommended_service": "AWS Batch or Lambda",
+                "template_location": "run/batch/ or run/lambda/",
+                "infrastructure": [
+                    "batch job definition",
+                    "compute environment",
+                    "job queue",
+                ],
+                "compliance_score": 1.0,
+            },
+            "save": {
+                "recommended_service": "AWS Lambda with batch writes",
+                "template_location": "run/lambda/",
+                "infrastructure": ["lambda function", "rds/dynamodb", "s3"],
+                "compliance_score": 0.85,
+            },
+        }
+
+        mapping = service_mapping.get(split_point, {})
+        compliance["compliance_score"] = mapping.get("compliance_score", 0.7)
+
+        # Template-specific benefits
+        if mapping:
+            compliance["template_benefits"].extend(
+                [
+                    f"Aligns with {target_template} {mapping['recommended_service']} patterns",
+                    f"Uses standard {target_template} directory structure: {mapping['template_location']}",
+                    f"Integrates with {target_template} infrastructure: {', '.join(mapping['infrastructure'])}",
+                    f"Leverages {target_template} monitoring and logging capabilities",
+                    f"Compatible with {target_template} CI/CD pipeline",
+                ]
+            )
+
+        # Check for potential template violations
+        if split_point not in service_mapping:
+            compliance["template_violations"].append(
+                f"Unsupported split point for {target_template}"
+            )
+            compliance["compliance_score"] -= 0.2
+
+        # Infrastructure requirements for template integration
+        if mapping:
+            compliance["infrastructure_requirements"] = [
+                f"Deploy to {mapping['template_location']} following template structure",
+                f"Configure {mapping['recommended_service']} with template-compliant settings",
+                "Integrate with TATami context for naming and tagging",
+                f"Set up {target_template} monitoring and alerting",
+                "Configure template-compliant logging and error handling",
+            ]
+
+        # Additional template-specific considerations
+        compliance["template_considerations"] = [
+            f"Ensure Docker configuration follows {target_template} patterns",
+            f"Use {target_template} Terraform modules for infrastructure",
+            f"Integrate with {target_template} testing framework",
+            f"Follow {target_template} security and compliance requirements",
+            f"Leverage {target_template} scaffolding and snippet systems",
+        ]
+
+        compliance["template_compliant"] = compliance["compliance_score"] >= 0.7
+        compliance["compliance_score"] = max(
+            0.0, min(1.0, compliance["compliance_score"])
+        )
+
+        return compliance
 
     def _convert_to_numeric(self, level: str) -> int:
         """Convert text levels to numeric values for visualization."""
@@ -477,7 +608,9 @@ async def save_parallel(processed_data):
         max_stage = max(complexity_data, key=lambda x: x["complexity"])
         return max_stage["stage"]
 
-    def _create_fallback_analysis(self, code: str, error: str) -> dict[str, Any]:
+    def _create_fallback_analysis(
+        self, code: str, error: str, target_template: str = "tatami-solution-template"
+    ) -> dict[str, Any]:
         """Create fallback analysis when main analysis fails."""
 
         return {
@@ -485,6 +618,7 @@ async def save_parallel(processed_data):
                 "timestamp": datetime.now().isoformat(),
                 "duration_seconds": 0.1,
                 "baml_available": BAML_AVAILABLE,
+                "target_template": target_template,
                 "error": error,
             },
             "splitter_recommendation": {
@@ -610,7 +744,7 @@ class SplitterAnalyzerCLI:
     def _create_html_visualization(self, result: dict[str, Any]) -> str:
         """Create HTML visualization of splitter analysis."""
 
-        viz_data = result["visualization_data"]
+        # viz_data = result["visualization_data"]  # Reserved for future chart enhancements
         recommendation = result["splitter_recommendation"]
         stages = result["stage_analysis"]
 

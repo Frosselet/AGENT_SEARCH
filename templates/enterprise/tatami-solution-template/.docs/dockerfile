@@ -1,0 +1,5 @@
+FROM quay.io/terraform-docs/terraform-docs:0.18.0
+
+COPY .docs/ tmp/
+RUN sed -i 's/\r$//' tmp/header.md
+RUN sed -i 's/\r$//' tmp/footer.md

@@ -5,6 +5,11 @@ Enterprise Package Intelligence Agent
 This agent understands and leverages enterprise-specific packages and follows
 approved code patterns from reference repositories. It ensures that modernized
 code uses standardized, enterprise-approved packages rather than generic solutions.
+
+TEMPLATE INTEGRATION:
+- Maps enterprise packages to template-compatible patterns (tatami-solution-template)
+- Ensures package choices align with template architecture and tooling
+- Validates modernized code against template package requirements
 """
 
 import asyncio
@@ -220,20 +225,24 @@ class EnterprisePackageAgent:
         }
 
     async def modernize_with_enterprise_packages(
-        self, legacy_code: str, pipeline_type: str = "data_processing"
+        self,
+        legacy_code: str,
+        pipeline_type: str = "data_processing",
+        target_template: str = "tatami-solution-template",
     ) -> dict[str, Any]:
         """
-        Modernize legacy code using enterprise packages and patterns.
+        Modernize legacy code using enterprise packages and template-compliant patterns.
 
         Args:
             legacy_code: The legacy pipeline code to modernize
             pipeline_type: Type of pipeline (data_processing, payment, customer, etc.)
+            target_template: Target enterprise template (default: tatami-solution-template)
 
         Returns:
-            Modernized code with enterprise package integration
+            Modernized code with enterprise package integration and template compliance
         """
         logger.info(
-            f"🏭 Starting enterprise modernization for {pipeline_type} pipeline..."
+            f"🏭 Starting enterprise modernization for {pipeline_type} pipeline targeting {target_template}..."
         )
 
         # Analyze legacy code structure
@@ -244,24 +253,38 @@ class EnterprisePackageAgent:
             legacy_analysis, pipeline_type
         )
 
+        # Perform template compliance mapping
+        template_mapping = self._map_packages_to_template(
+            relevant_patterns, target_template
+        )
+
         # Generate modernized code using enterprise patterns
         if BAML_AVAILABLE:
             modernized_code = await self._generate_enterprise_code_baml(
-                legacy_code, relevant_patterns, pipeline_type
+                legacy_code, relevant_patterns, pipeline_type, target_template
             )
         else:
             modernized_code = self._generate_enterprise_code_fallback(
-                legacy_code, relevant_patterns, pipeline_type
+                legacy_code, relevant_patterns, pipeline_type, target_template
             )
 
         # Validate enterprise compliance
-        compliance_check = self._validate_enterprise_compliance(modernized_code)
+        compliance_check = self._validate_enterprise_compliance(
+            modernized_code, target_template
+        )
+
+        # Assess template compliance
+        template_compliance = self._assess_template_compliance(
+            modernized_code, template_mapping
+        )
 
         return {
             "modernized_code": modernized_code,
             "enterprise_patterns_used": [p.package_name for p in relevant_patterns],
             "legacy_analysis": legacy_analysis,
             "compliance_check": compliance_check,
+            "template_compliance": template_compliance,
+            "template_mapping": template_mapping,
             "modernization_benefits": self._calculate_enterprise_benefits(
                 relevant_patterns
             ),
@@ -526,7 +549,7 @@ class Enterprise{pattern_name.replace('_', '').title()}:
 '''
 
         # Generate methods for each phase
-        for i, phase in enumerate(phases):
+        for phase in phases:
             template += f'''
     @with_logging(level="INFO", context=True)
     @with_retry(max_attempts=3, backoff_strategy="exponential")
@@ -671,9 +694,13 @@ if __name__ == "__main__":
         return relevant
 
     async def _generate_enterprise_code_baml(
-        self, legacy_code: str, patterns: list[PackagePattern], pipeline_type: str
+        self,
+        legacy_code: str,
+        patterns: list[PackagePattern],
+        pipeline_type: str,
+        target_template: str = "tatami-solution-template",
     ) -> str:
-        """Generate enterprise code using BAML AI assistance."""
+        """Generate enterprise code using BAML AI assistance with template compliance."""
         try:
             pattern_descriptions = []
             for pattern in patterns:
@@ -695,8 +722,17 @@ Example:
                 analysis_context=f"""
 Enterprise modernization requirements:
 - Pipeline Type: {pipeline_type}
+- Target Template: {target_template}
 - Must use these enterprise patterns:
 {patterns_text}
+
+Template Integration Requirements:
+- Follow {target_template} directory structure (run/lambda/, run/batch/, etc.)
+- Integrate with TATami context for naming and tagging
+- Use template-compliant Docker configuration
+- Follow template testing patterns
+- Integrate with Vela CI/CD pipeline
+- Use template logging and monitoring patterns
 
 Requirements from PIPELINE.md:
 - Use data contract bindings for all data structures
@@ -712,11 +748,15 @@ Requirements from PIPELINE.md:
         except Exception as e:
             logger.warning(f"BAML generation failed: {e}, using fallback")
             return self._generate_enterprise_code_fallback(
-                legacy_code, patterns, pipeline_type
+                legacy_code, patterns, pipeline_type, target_template
             )
 
     def _generate_enterprise_code_fallback(
-        self, legacy_code: str, patterns: list[PackagePattern], pipeline_type: str
+        self,
+        legacy_code: str,
+        patterns: list[PackagePattern],
+        pipeline_type: str,
+        target_template: str = "tatami-solution-template",
     ) -> str:
         """Fallback code generation when BAML is not available."""
 
@@ -733,19 +773,45 @@ Requirements from PIPELINE.md:
                 template_name, pattern_info
             )
 
+            # Add template-specific structure comments
+            template_header = f'''#!/usr/bin/env python3
+"""
+Enterprise Modernized Pipeline
+Generated by Enterprise Package Intelligence Agent
+Target Template: {target_template}
+
+Template Structure:
+- Follows {target_template} directory patterns
+- Integrates with TATami context and enterprise tooling
+- Uses template-compliant logging and monitoring
+"""
+'''
+
             # Add specific logic based on legacy code analysis
             modernized = base_template.replace(
+                "#!/usr/bin/env python3",
+                template_header,
+            )
+
+            modernized = modernized.replace(
                 "# TODO: Implement",
-                "# Modernized from legacy code\n        # TODO: Implement",
+                f"# Modernized from legacy code\n        # TODO: Implement template-compliant logic\n        # Template: {target_template}",
             )
 
             return modernized
 
-        # Ultimate fallback
+        # Ultimate fallback with template integration
         return f'''#!/usr/bin/env python3
 """
 Enterprise Modernized Pipeline
 Generated by Enterprise Package Intelligence Agent
+Target Template: {target_template}
+
+TEMPLATE INTEGRATION:
+- Directory: run/lambda/ or run/batch/ based on service type
+- Context: TATami context for naming and tagging
+- Testing: Template testing framework integration
+- CI/CD: Vela pipeline integration
 """
 
 from data_contract_bindings import BaseSchema
@@ -758,20 +824,35 @@ logger = StructuredLogger(__name__)
 @with_retry(max_attempts=3)
 @with_events(event_type="pipeline.completed")
 async def modernized_pipeline(data):
-    """Modernized version of legacy pipeline using enterprise packages."""
-    logger.info("Pipeline execution started")
+    """
+    Modernized version of legacy pipeline using enterprise packages.
+
+    Template Compliance:
+    - Follows {target_template} patterns
+    - Uses enterprise package standards
+    - Integrates with template tooling
+    """
+    logger.info("Pipeline execution started", extra={{"template": "{target_template}"}})
 
     # TODO: Implement modernized logic based on:
     # Original code: {len(legacy_code)} characters
     # Pipeline type: {pipeline_type}
     # Patterns: {[p.package_name for p in patterns]}
+    # Target template: {target_template}
 
     return data
 '''
 
-    def _validate_enterprise_compliance(self, code: str) -> dict[str, Any]:
+    def _validate_enterprise_compliance(
+        self, code: str, target_template: str = "tatami-solution-template"
+    ) -> dict[str, Any]:
         """Validate that generated code follows enterprise compliance."""
-        compliance = {"compliant": True, "violations": [], "score": 100}
+        compliance = {
+            "compliant": True,
+            "violations": [],
+            "score": 100,
+            "template": target_template,
+        }
 
         required_imports = [
             "data_contract_bindings",
@@ -797,7 +878,169 @@ async def modernized_pipeline(data):
             compliance["violations"].append("Missing enterprise decorators")
             compliance["score"] -= 15
 
+        # Template-specific compliance checks
+        if target_template in code:
+            compliance["score"] += 5  # Bonus for template awareness
+        else:
+            compliance["violations"].append(
+                f"No reference to target template: {target_template}"
+            )
+            compliance["score"] -= 5
+
+        # Check for TATami context integration
+        if "TATami" not in code and "tatami" not in code.lower():
+            compliance["violations"].append("Missing TATami context integration")
+            compliance["score"] -= 10
+
         compliance["compliant"] = compliance["score"] >= 70
+        return compliance
+
+    def _map_packages_to_template(
+        self, patterns: list[PackagePattern], target_template: str
+    ) -> dict[str, Any]:
+        """Map enterprise packages to template structure and requirements."""
+        logger.info(
+            f"🗺️ Mapping {len(patterns)} enterprise patterns to {target_template}"
+        )
+
+        # Map patterns to template directories
+        directory_mapping = {}
+
+        for pattern in patterns:
+            if pattern.pattern_type == "data_contract":
+                directory_mapping[pattern.package_name] = {
+                    "target_location": "run/lambda/",
+                    "template_integration": "Data contract bindings for schema validation",
+                    "required_files": ["requirements.txt", "main.py"],
+                    "template_benefits": [
+                        "Type safety",
+                        "Schema consistency",
+                        "Validation automation",
+                    ],
+                }
+            elif pattern.pattern_type == "logging":
+                directory_mapping[pattern.package_name] = {
+                    "target_location": "run/lambda/ + tests/",
+                    "template_integration": "Structured logging with template monitoring",
+                    "required_files": ["main.py", "requirements.txt"],
+                    "template_benefits": [
+                        "Observability",
+                        "Template-compliant logging",
+                        "DataDog integration",
+                    ],
+                }
+            elif pattern.pattern_type == "events":
+                directory_mapping[pattern.package_name] = {
+                    "target_location": "run/lambda/ + infrastructure/",
+                    "template_integration": "EventBridge integration with template patterns",
+                    "required_files": ["main.py", "main.tf", "variables.tf"],
+                    "template_benefits": [
+                        "Event-driven architecture",
+                        "Service decoupling",
+                        "Template event patterns",
+                    ],
+                }
+            elif pattern.pattern_type == "retry":
+                directory_mapping[pattern.package_name] = {
+                    "target_location": "run/lambda/",
+                    "template_integration": "Retry patterns compatible with template monitoring",
+                    "required_files": ["main.py", "requirements.txt"],
+                    "template_benefits": [
+                        "Fault tolerance",
+                        "Template-compliant error handling",
+                        "Automatic recovery",
+                    ],
+                }
+
+        return {
+            "target_template": target_template,
+            "pattern_mapping": directory_mapping,
+            "template_requirements": {
+                "terraform_integration": f"All patterns must integrate with {target_template} Terraform structure",
+                "testing_integration": f"Must follow {target_template} testing patterns",
+                "ci_cd_integration": f"Compatible with {target_template} Vela CI/CD pipeline",
+                "development_integration": f"Must work with {target_template} Docker development environment",
+            },
+            "compliance_score": self._calculate_template_mapping_score(
+                directory_mapping
+            ),
+        }
+
+    def _calculate_template_mapping_score(self, directory_mapping: dict) -> float:
+        """Calculate a score (0.0-1.0) for how well packages map to template."""
+        if not directory_mapping:
+            return 0.0
+
+        total_score = 0.0
+        for package_info in directory_mapping.values():
+            # Score based on completeness of mapping
+            score = 0.25  # Base score for having a mapping
+            if package_info.get("target_location"):
+                score += 0.25
+            if package_info.get("template_integration"):
+                score += 0.25
+            if package_info.get("required_files"):
+                score += 0.25
+            total_score += score
+
+        return total_score / len(directory_mapping)
+
+    def _assess_template_compliance(
+        self, modernized_code: str, template_mapping: dict
+    ) -> dict[str, Any]:
+        """Assess how well the modernized code complies with template patterns."""
+
+        compliance = {
+            "template_compliant": True,
+            "compliance_score": 1.0,
+            "template_violations": [],
+            "template_recommendations": [],
+        }
+
+        target_template = template_mapping.get("target_template", "unknown")
+
+        # Check for template-specific patterns in code
+        template_indicators = [
+            ("TATami context", ["TATami", "tatami"]),
+            ("Template structure", ["run/lambda", "run/batch", target_template]),
+            ("Enterprise packages", ["data_contract_bindings", "tatami_behaviors"]),
+            ("Template logging", ["StructuredLogger", "with_logging"]),
+            ("Template events", ["with_events", "publish_domain_event"]),
+        ]
+
+        for indicator_name, patterns in template_indicators:
+            found = any(pattern in modernized_code for pattern in patterns)
+            if not found:
+                compliance["template_violations"].append(f"Missing {indicator_name}")
+                compliance["compliance_score"] -= 0.15
+
+        # Check if required files are referenced or would be needed
+        required_files_mentioned = ["requirements.txt", "main.py", "dockerfile"]
+        files_referenced = sum(
+            1 for file in required_files_mentioned if file in modernized_code
+        )
+        if files_referenced == 0:
+            compliance["template_violations"].append(
+                "No template file structure references"
+            )
+            compliance["compliance_score"] -= 0.10
+
+        # Generate recommendations based on missing elements
+        if compliance["template_violations"]:
+            compliance["template_recommendations"].extend(
+                [
+                    f"Integrate with {target_template} directory structure",
+                    "Add TATami context for standardized naming and tagging",
+                    "Include template-compliant Docker configuration",
+                    "Follow template testing and CI/CD patterns",
+                ]
+            )
+
+        compliance["template_compliant"] = compliance["compliance_score"] >= 0.7
+        compliance["compliance_score"] = max(
+            0.0, min(1.0, compliance["compliance_score"])
+        )
+
         return compliance
 
     def _calculate_enterprise_benefits(

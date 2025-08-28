@@ -1,0 +1,38 @@
+{
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "port": 6560,
+                "host": "127.0.0.1"
+            },
+            "justMyCode": false,
+            "preLaunchTask": "docker-attach-debugger",
+            "pathMappings": [
+                {
+                    "localRoot": "${fileDirname}",
+                    "remoteRoot": "/run"
+                }
+            ],
+            "postDebugTask": "docker-detach-debugger"
+        },
+        {
+            "name": "Debug-Batch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run-local-batch",
+            "python": {
+                "justMyCode": false,
+                "pathMappings": [
+                    {
+                        "localRoot": "${fileDirname}",
+                        "remoteRoot": "/run"
+                    }
+                ],
+                "projectType": "general"
+            }
+        }
+    ]
+}
