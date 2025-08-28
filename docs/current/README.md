@@ -58,7 +58,7 @@ Transforms legacy Python data pipelines into modern, scalable, AWS-optimized arc
 ```bash
 # Clone and setup
 git clone <repository>
-cd agent_search
+cd agentic-modernization-platform
 
 # Install dependencies
 pip install -r requirements.txt
@@ -128,7 +128,7 @@ Based on actual testing:
 ## 📁 **File Structure**
 
 ```
-agent_search/
+agentic-modernization-platform/
 ├── src/
 │   ├── agents/              # All 6 specialized agents
 │   │   ├── master_orchestrator.py

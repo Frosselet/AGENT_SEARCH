@@ -20,7 +20,7 @@ make demo-quick
 ## 📦 Project Structure
 
 ```
-agent_search/
+agentic-modernization-platform/
 ├── pyproject.toml          # UV project configuration
 ├── uv.lock                 # Dependency lockfile (auto-generated)
 ├── .python-version         # Python version specification

@@ -1,4 +1,4 @@
-# 🤖 Enterprise AI-Powered Pipeline Modernization Platform
+# 🤖 Agentic Modernization Platform
 
 **Template-Agnostic Multi-Agent System for Dynamic Legacy Code Transformation**
 
@@ -151,7 +151,7 @@ The platform **automatically supports ANY template** you add:
 ```bash
 # Clone the platform
 git clone <repository-url>
-cd agent_search
+cd agentic-modernization-platform
 
 # The platform automatically discovers available templates
 python -m src.core.template_registry

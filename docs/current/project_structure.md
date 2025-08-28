@@ -7,7 +7,7 @@ This document outlines the organized structure of the Multi-Agent Pipeline Moder
 ## Directory Structure
 
 ```
-agent_search/
+agentic-modernization-platform/
 ├── src/
 │   ├── agents/                          # 🤖 All Specialized Agents
 │   │   ├── __init__.py                  # Agent package initialization

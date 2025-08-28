@@ -6,7 +6,7 @@
 ```bash
 # 1. Clone the repository
 git clone <repository-url>
-cd agent_search
+cd agentic-modernization-platform
 
 # 2. Install dependencies
 pip install -r requirements.txt

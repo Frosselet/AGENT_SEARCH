@@ -19,7 +19,7 @@
 #### Option B: Development Installation
 ```bash
 # Clone the repository
-cd /path/to/agent_search/vscode-extension
+cd /path/to/agentic-modernization-platform/vscode-extension
 
 # Install dependencies
 npm install
@@ -40,7 +40,7 @@ The extension works with our multi-agent backend system:
 
 ```bash
 # Navigate to project root
-cd /path/to/agent_search
+cd /path/to/agentic-modernization-platform
 
 # Install Python dependencies
 uv sync

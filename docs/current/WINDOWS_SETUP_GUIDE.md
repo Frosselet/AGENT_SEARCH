@@ -1,8 +1,8 @@
 # Windows Setup Guide
 
-## 🚀 Pipeline Modernization System on Windows
+## 🚀 Agentic Modernization Platform on Windows
 
-This guide provides Windows-specific instructions for setting up the Pipeline Modernization System.
+This guide provides Windows-specific instructions for setting up the Agentic Modernization Platform.
 
 ## ✅ Prerequisites
 
@@ -36,8 +36,8 @@ Run the Windows setup script:
 
 ```cmd
 # Clone the repository
-git clone https://github.com/Frosselet/AGENT_SEARCH.git
-cd AGENT_SEARCH
+git clone https://github.com/Frosselet/agentic-modernization-platform.git
+cd agentic-modernization-platform
 
 # Run Windows setup script
 scripts\setup.bat
